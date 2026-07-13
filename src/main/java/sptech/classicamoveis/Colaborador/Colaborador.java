@@ -31,7 +31,7 @@ public class Colaborador {
     private Usuario usuario;
 
     @Column(name = "em_ferias")
-    private Byte emFerias;
+    private Boolean emFerias;
 
     @Column(name = "data_admissao")
     private LocalDate dataAdmissao;
@@ -45,4 +45,5 @@ public class Colaborador {
     private String carteiraTrabalho;
 
     private Integer comissao;
+
 }
