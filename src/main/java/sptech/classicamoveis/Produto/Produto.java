@@ -3,6 +3,7 @@ package sptech.classicamoveis.Produto;
 import jakarta.persistence.*;
 import lombok.*;
 import sptech.classicamoveis.Categoria.Categoria;
+import sptech.classicamoveis.Fornecedor.model.Fornecedor;
 
 @Entity
 @Table(name = "produto")
