@@ -23,10 +23,9 @@ public class Usuario implements UserDetails {
     @Column(length = 20)
     private String login;
 
-    @Column(length = 45) // Dica: Aumente este tamanho para 60+ caso o BCrypt gere hashes longos!
+    @Column(length = 70)
     private String senha;
 
-    // Métodos obrigatórios do UserDetails do Spring Security
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
