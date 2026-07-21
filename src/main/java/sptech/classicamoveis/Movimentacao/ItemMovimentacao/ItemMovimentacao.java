@@ -1,6 +1,7 @@
 package sptech.classicamoveis.Movimentacao.ItemMovimentacao;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import sptech.classicamoveis.Movimentacao.Movimentacao;
 import sptech.classicamoveis.Produto.Produto;
@@ -18,6 +19,7 @@ public class ItemMovimentacao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Min(value = 1)
     private Integer qtd;
 
     @ManyToOne
@@ -27,4 +29,7 @@ public class ItemMovimentacao {
     @ManyToOne
     @JoinColumn(name = "fk_produto", nullable = false)
     private Produto produto;
+
+    @Column(name = "preco_unitario", nullable = false)
+    private Double precoUnitario;
 }
