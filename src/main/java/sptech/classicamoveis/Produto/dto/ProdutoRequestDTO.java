@@ -1,4 +1,15 @@
 package sptech.classicamoveis.Produto.dto;
 
-public record ProdutoRequestDTO() {
+import sptech.classicamoveis.Categoria.Categoria;
+import sptech.classicamoveis.Fornecedor.model.Fornecedor;
+
+public record ProdutoRequestDTO(
+        Integer id,
+        String nome,
+        Fornecedor fornecedor,
+        Categoria categoria,
+        Double precoCusto,
+        Integer estoqueMin,
+        String ncm
+) {
 }
