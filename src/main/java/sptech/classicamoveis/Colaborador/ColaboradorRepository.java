@@ -1,7 +1,9 @@
 package sptech.classicamoveis.Colaborador;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
-@Repository
-public interface ColaboradorRepository extends JpaRepository<Colaborador, Integer> {}
+public interface ColaboradorRepository extends JpaRepository<Colaborador, Integer> {
+
+    Optional<Colaborador> findByUsuario_Login(String login);
+}

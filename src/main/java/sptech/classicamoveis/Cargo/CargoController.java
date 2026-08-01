@@ -16,6 +16,9 @@ public class CargoController {
 
     @GetMapping
     public ResponseEntity<List<CargoResponseDto>> listarTodos() {
+
+        System.out.println("CHEGOU NO CONTROLLER");
+
         return ResponseEntity.ok(cargoService.listarTodos());
     }
 

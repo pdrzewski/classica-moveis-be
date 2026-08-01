@@ -1,0 +1,38 @@
+PASSO A PASSO - CONFIGURACAO JWT (BANCO + SPRING)
+====================================================
+
+1. CRIAR UM CARGO
+   - Insere um cargo (ex: 'ADMIN') direto no banco ou pelo endpoint, se estiver liberado.
+   - Anota o id gerado.
+
+2. CRIAR UM USUARIO
+   - Pelo endpoint de cadastro de usuario, informando login e senha.
+   - A senha ja e salva com hash (BCrypt), nunca em texto puro.
+   - Anota o id retornado.
+
+3. CRIAR UM COLABORADOR VINCULANDO USUARIO E CARGO
+   - Pelo endpoint de colaborador, informando cargoId e usuarioId dos passos anteriores,
+     mais os demais dados (nome, data de admissao, etc.).
+
+4. VINCULAR PERMISSOES AO CARGO
+   - Se ja tem permissoes cadastradas, vincula cada uma ao cargo criado
+     (tabela de juncao cargo_has_permissao).
+   - Sem isso o login funciona, mas o usuario fica sem nenhuma authority.
+
+5. TESTAR O LOGIN
+   - Chama o endpoint de login com esse usuario e senha.
+   - Confirma que retornou 200 e que o cookie do token apareceu
+     (no navegador ou no cliente de teste tipo Postman/Insomnia).
+
+6. TESTAR UMA ROTA PROTEGIDA
+   - Com o cookie salvo, chama uma rota protegida qualquer.
+   - Deve retornar 200 em vez de 401.
+
+====================================================
+LEMBRETE DE SEGURANCA
+====================================================
+Se as URLs de cadastro inicial (ex: /api/usuarios, /api/cargos, /api/colaboradores)
+foram liberadas temporariamente no SecurityConfiguracao (URLS_PERMITIDAS) so pra
+conseguir popular o banco pela primeira vez, TIRAR essas URLs da lista assim que
+o login estiver funcionando. Depois disso, criar novos registros deve exigir
+estar autenticado.
