@@ -21,7 +21,7 @@ public class Cargo {
     @Column(length = 45)
     private String cargo;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "cargo_has_permissao",
             joinColumns = @JoinColumn(name = "cargo_id"),
