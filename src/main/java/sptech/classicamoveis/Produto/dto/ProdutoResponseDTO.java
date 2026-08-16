@@ -1,14 +1,17 @@
 package sptech.classicamoveis.Produto.dto;
 
-import sptech.classicamoveis.Categoria.Categoria;
-import sptech.classicamoveis.Fornecedor.model.Fornecedor;
-
 public record ProdutoResponseDTO(
+        Integer id,
+        Long fornecedorId,
+        Integer categoriaId,
         String nome,
-        Fornecedor fornecedor,
-        Categoria categoria,
+        String sku,
+        String codigoBarras,
+        String unidadeMedida,
+        String marca,
         Double precoCusto,
-        Integer estoqueMin,
-        String ncm
+        Double precoVenda,
+        Integer estoqueMinimo,
+        Boolean ativo
 ) {
 }

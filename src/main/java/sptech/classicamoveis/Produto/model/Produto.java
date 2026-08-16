@@ -16,26 +16,38 @@ public class Produto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(length = 45)
+    @Column(nullable = false, length = 45)
     private String nome;
 
-    @ManyToOne
-    @JoinColumn(name = "fk_fornecedor", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "fornecedor_id", nullable = false)
     private Fornecedor fornecedor;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
 
-    @Column(name = "preco_custo")
-    private Double precoCusto;
+    @Column(length = 45)
+    private String sku;
 
-    @Column(name = "preco_venda")
-    private Double precoVenda;
+    @Column(name = "codigo_barras", length = 45)
+    private String codigoBarras;
 
-    @Column(name = "estoque_min")
-    private Integer estoqueMin;
+    @Column(name = "unidade_medida", length = 45)
+    private String unidadeMedida;
 
     @Column(length = 45)
-    private String ncm;
+    private String marca;
+
+    @Column(name = "preco_custo", nullable = false)
+    private Double precoCusto;
+
+    @Column(name = "preco_venda", nullable = false)
+    private Double precoVenda;
+
+    @Column(name = "estoque_minimo", nullable = false)
+    private Integer estoqueMinimo;
+
+    @Column(nullable = false)
+    private Boolean ativo;
 }
