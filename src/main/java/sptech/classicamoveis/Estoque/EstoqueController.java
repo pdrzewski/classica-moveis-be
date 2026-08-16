@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import sptech.classicamoveis.Compra.Compra;
 import sptech.classicamoveis.Movimentacao.Movimentacao;
 import sptech.classicamoveis.Movimentacao.MovimentacaoComItensDto;
-import sptech.classicamoveis.Produto.ProdutoService;
+import sptech.classicamoveis.Produto.service.ProdutoService;
 import sptech.classicamoveis.Transferencia.Transferencia;
 import sptech.classicamoveis.Venda.Venda;
 

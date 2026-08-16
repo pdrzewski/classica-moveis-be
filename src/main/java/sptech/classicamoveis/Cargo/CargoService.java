@@ -30,12 +30,14 @@ public class CargoService {
     public CargoResponseDto criar(CargoRequestDto dto) {
         Cargo cargo = new Cargo();
         cargo.setCargo(dto.getNome());
+        cargo.setPermissoes(resolverPermissoes(dto.getPermissoesIds()));
         return toResponseDTO(cargoRepository.save(cargo));
     }
 
     public CargoResponseDto atualizar(Integer id, CargoRequestDto dto) {
         Cargo cargo = buscarEntidadePorId(id);
         cargo.setCargo(dto.getNome());
+        cargo.setPermissoes(resolverPermissoes(dto.getPermissoesIds()));
         return toResponseDTO(cargoRepository.save(cargo));
     }
 
