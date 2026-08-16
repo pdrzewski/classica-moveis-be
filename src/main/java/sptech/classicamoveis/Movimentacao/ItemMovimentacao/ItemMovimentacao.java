@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 import sptech.classicamoveis.Movimentacao.Movimentacao;
-import sptech.classicamoveis.Produto.Produto;
+import sptech.classicamoveis.Produto.model.Produto;
 
 @Entity
 @Table(name = "item_movimentacao", uniqueConstraints = {
