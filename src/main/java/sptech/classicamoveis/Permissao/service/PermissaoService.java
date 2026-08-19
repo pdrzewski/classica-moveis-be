@@ -1,8 +1,12 @@
-package sptech.classicamoveis.Permissao;
+package sptech.classicamoveis.Permissao.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import sptech.classicamoveis.Permissao.dto.PermissaoRequestDto;
+import sptech.classicamoveis.Permissao.dto.PermissaoResponseDto;
+import sptech.classicamoveis.Permissao.model.Permissao;
+import sptech.classicamoveis.Permissao.repository.PermissaoRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -3,10 +3,14 @@ package sptech.classicamoveis.Permissao;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import sptech.classicamoveis.Permissao.dto.PermissaoRequestDto;
+import sptech.classicamoveis.Permissao.dto.PermissaoResponseDto;
+import sptech.classicamoveis.Permissao.model.Permissao;
+import sptech.classicamoveis.Permissao.repository.PermissaoRepository;
+import sptech.classicamoveis.Permissao.service.PermissaoService;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,8 +20,10 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PermissaoServiceTest {
-    @Mock PermissaoRepository repository;
-    @InjectMocks PermissaoService service;
+    @Mock
+    PermissaoRepository repository;
+    @InjectMocks
+    PermissaoService service;
 
     @Test void listaTodasAsPermissoes() {
         when(repository.findAll()).thenReturn(List.of(new Permissao(1, "ADMIN"), new Permissao(2, "VENDA")));
