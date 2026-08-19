@@ -23,8 +23,8 @@ import sptech.classicamoveis.Produto.repository.ProdutoRepository;
 import sptech.classicamoveis.Produto.service.ProdutoService;
 import sptech.classicamoveis.Transferencia.model.Transferencia;
 import sptech.classicamoveis.Transferencia.repository.TransferenciaRepository;
-import sptech.classicamoveis.Venda.Venda;
-import sptech.classicamoveis.Venda.VendaRepository;
+import sptech.classicamoveis.Venda.model.Venda;
+import sptech.classicamoveis.Venda.repository.VendaRepository;
 
 import java.util.List;
 
