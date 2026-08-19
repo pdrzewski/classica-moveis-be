@@ -1,4 +1,4 @@
-package sptech.classicamoveis.Cargo;
+package sptech.classicamoveis.Cargo.dto;
 
 import java.util.Set;
 

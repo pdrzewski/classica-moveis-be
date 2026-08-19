@@ -6,6 +6,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import sptech.classicamoveis.Cargo.dto.CargoRequestDto;
+import sptech.classicamoveis.Cargo.model.Cargo;
+import sptech.classicamoveis.Cargo.repository.CargoRepository;
+import sptech.classicamoveis.Cargo.service.CargoService;
 import sptech.classicamoveis.Permissao.model.Permissao;
 import sptech.classicamoveis.Permissao.repository.PermissaoRepository;
 import java.util.*;
@@ -14,7 +18,9 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CargoServiceTest {
- @Mock CargoRepository repository; @Mock PermissaoRepository permissaoRepository; @InjectMocks CargoService service;
+ @Mock
+ CargoRepository repository; @Mock PermissaoRepository permissaoRepository; @InjectMocks
+ CargoService service;
  private Cargo cargo(int id, String nome) { Cargo c=new Cargo(); c.setId(id); c.setCargo(nome); return c; }
  @Test void listaCargos() { when(repository.findAll()).thenReturn(List.of(cargo(1,"GERENTE"))); assertEquals("GERENTE",service.listarTodos().getFirst().getNome()); }
  @Test void buscaCargo() { when(repository.findById(1)).thenReturn(Optional.of(cargo(1,"GERENTE"))); assertEquals(1,service.buscarPorId(1).getId()); }

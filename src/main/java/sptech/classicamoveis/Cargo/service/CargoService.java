@@ -1,8 +1,12 @@
-package sptech.classicamoveis.Cargo;
+package sptech.classicamoveis.Cargo.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import sptech.classicamoveis.Cargo.dto.CargoRequestDto;
+import sptech.classicamoveis.Cargo.dto.CargoResponseDto;
+import sptech.classicamoveis.Cargo.model.Cargo;
+import sptech.classicamoveis.Cargo.repository.CargoRepository;
 import sptech.classicamoveis.Permissao.model.Permissao;
 import sptech.classicamoveis.Permissao.repository.PermissaoRepository;
 
