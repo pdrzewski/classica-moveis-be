@@ -1,6 +1,7 @@
-package sptech.classicamoveis.Usuario;
+package sptech.classicamoveis.Usuario.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import sptech.classicamoveis.Usuario.model.Usuario;
 
 import java.util.Optional;
 

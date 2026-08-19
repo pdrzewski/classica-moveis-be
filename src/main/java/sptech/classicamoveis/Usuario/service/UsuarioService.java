@@ -1,10 +1,14 @@
-package sptech.classicamoveis.Usuario;
+package sptech.classicamoveis.Usuario.service;
 
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import sptech.classicamoveis.Usuario.dto.UsuarioRequestDto;
+import sptech.classicamoveis.Usuario.dto.UsuarioResponseDto;
+import sptech.classicamoveis.Usuario.model.Usuario;
+import sptech.classicamoveis.Usuario.repository.UsuarioRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;

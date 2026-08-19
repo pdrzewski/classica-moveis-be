@@ -1,4 +1,4 @@
-package sptech.classicamoveis.Usuario;
+package sptech.classicamoveis.Usuario.dto;
 
 public record UsuarioRequestDto(
         String login,

@@ -4,7 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import sptech.classicamoveis.Colaborador.Colaborador;
-import sptech.classicamoveis.Usuario.Usuario;
+import sptech.classicamoveis.Usuario.model.Usuario;
 
 import java.util.Collection;
 import java.util.Collections;

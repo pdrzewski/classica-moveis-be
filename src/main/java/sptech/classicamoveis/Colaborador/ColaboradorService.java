@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import sptech.classicamoveis.Cargo.Cargo; // Certifique-se de que os caminhos dos pacotes estão certos
 import sptech.classicamoveis.Cargo.CargoRepository;
-import sptech.classicamoveis.Usuario.Usuario;
-import sptech.classicamoveis.Usuario.UsuarioRepository;
+import sptech.classicamoveis.Usuario.model.Usuario;
+import sptech.classicamoveis.Usuario.repository.UsuarioRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;

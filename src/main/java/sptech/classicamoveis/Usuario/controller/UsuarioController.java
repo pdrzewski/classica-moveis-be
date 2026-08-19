@@ -1,9 +1,12 @@
-package sptech.classicamoveis.Usuario;
+package sptech.classicamoveis.Usuario.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sptech.classicamoveis.Usuario.dto.UsuarioRequestDto;
+import sptech.classicamoveis.Usuario.dto.UsuarioResponseDto;
+import sptech.classicamoveis.Usuario.service.UsuarioService;
 
 import java.util.List;
 
