@@ -8,14 +8,21 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import sptech.classicamoveis.Usuario.dto.UsuarioRequestDto;
+import sptech.classicamoveis.Usuario.model.Usuario;
+import sptech.classicamoveis.Usuario.repository.UsuarioRepository;
+import sptech.classicamoveis.Usuario.service.UsuarioService;
+
 import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UsuarioServiceTest {
- @Mock UsuarioRepository repository; @Mock PasswordEncoder encoder; @InjectMocks UsuarioService service;
- private Usuario usuario(int id,String login){return new Usuario(id,login,"hash");}
+ @Mock
+ UsuarioRepository repository; @Mock PasswordEncoder encoder; @InjectMocks
+ UsuarioService service;
+ private Usuario usuario(int id, String login){return new Usuario(id,login,"hash");}
  @Test void listaUsuarios(){when(repository.findAll()).thenReturn(List.of(usuario(1,"ana")));assertEquals("ana",service.listarTodos().getFirst().getLogin());}
  @Test void buscaUsuario(){when(repository.findById(1)).thenReturn(Optional.of(usuario(1,"ana")));assertEquals(1,service.buscarPorId(1).getId());}
  @Test void falhaAoBuscarUsuarioAusente(){when(repository.findById(1)).thenReturn(Optional.empty());assertThrows(EntityNotFoundException.class,()->service.buscarPorId(1));}

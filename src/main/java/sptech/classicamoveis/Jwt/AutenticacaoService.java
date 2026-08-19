@@ -6,8 +6,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import sptech.classicamoveis.Colaborador.Colaborador;
 import sptech.classicamoveis.Colaborador.ColaboradorRepository;
-import sptech.classicamoveis.Usuario.Usuario;
-import sptech.classicamoveis.Usuario.UsuarioRepository;
+import sptech.classicamoveis.Usuario.model.Usuario;
+import sptech.classicamoveis.Usuario.repository.UsuarioRepository;
 
 @Service
 public class AutenticacaoService implements UserDetailsService {

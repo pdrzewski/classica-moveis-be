@@ -4,7 +4,7 @@ package sptech.classicamoveis.Colaborador;
 import jakarta.persistence.*;
 import lombok.*;
 import sptech.classicamoveis.Cargo.Cargo;
-import sptech.classicamoveis.Usuario.Usuario;
+import sptech.classicamoveis.Usuario.model.Usuario;
 
 import java.time.LocalDate;
 
