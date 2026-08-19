@@ -3,8 +3,8 @@ package sptech.classicamoveis.Colaborador.service;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import sptech.classicamoveis.Cargo.Cargo; // Certifique-se de que os caminhos dos pacotes estão certos
-import sptech.classicamoveis.Cargo.CargoRepository;
+import sptech.classicamoveis.Cargo.model.Cargo; // Certifique-se de que os caminhos dos pacotes estão certos
+import sptech.classicamoveis.Cargo.repository.CargoRepository;
 import sptech.classicamoveis.Colaborador.dto.ColaboradorRequestDto;
 import sptech.classicamoveis.Colaborador.dto.ColaboradorResponseDto;
 import sptech.classicamoveis.Colaborador.model.Colaborador;

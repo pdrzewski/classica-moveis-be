@@ -6,7 +6,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import sptech.classicamoveis.Cargo.*;
+import sptech.classicamoveis.Cargo.model.Cargo;
+import sptech.classicamoveis.Cargo.repository.CargoRepository;
 import sptech.classicamoveis.Colaborador.dto.ColaboradorRequestDto;
 import sptech.classicamoveis.Colaborador.model.Colaborador;
 import sptech.classicamoveis.Colaborador.repository.ColaboradorRepository;
@@ -22,7 +23,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ColaboradorServiceTest {
  @Mock
- ColaboradorRepository repository; @Mock CargoRepository cargoRepository; @Mock
+ ColaboradorRepository repository; @Mock
+ CargoRepository cargoRepository; @Mock
  UsuarioRepository usuarioRepository; @InjectMocks
  ColaboradorService service;
  private ColaboradorRequestDto dto(Boolean ferias){return new ColaboradorRequestDto("Ana",2,3,ferias,LocalDate.of(2020,1,1),LocalDate.of(1990,1,1),2000.0,"CT",10);} private Cargo cargo(){return new Cargo(2,"GERENTE",new HashSet<>());} private Usuario usuario(){return new Usuario(3,"ana","h");} private Colaborador colaborador(){Colaborador c=new Colaborador();c.setId(1);c.setNome("Ana");c.setCargo(cargo());c.setUsuario(usuario());return c;}

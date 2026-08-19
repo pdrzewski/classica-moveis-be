@@ -1,9 +1,12 @@
-package sptech.classicamoveis.Cargo;
+package sptech.classicamoveis.Cargo.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sptech.classicamoveis.Cargo.dto.CargoRequestDto;
+import sptech.classicamoveis.Cargo.dto.CargoResponseDto;
+import sptech.classicamoveis.Cargo.service.CargoService;
 
 import java.util.List;
 

@@ -3,7 +3,7 @@ package sptech.classicamoveis.Colaborador.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import sptech.classicamoveis.Cargo.Cargo;
+import sptech.classicamoveis.Cargo.model.Cargo;
 import sptech.classicamoveis.Usuario.model.Usuario;
 
 import java.time.LocalDate;
