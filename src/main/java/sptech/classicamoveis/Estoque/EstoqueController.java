@@ -8,7 +8,7 @@ import sptech.classicamoveis.Movimentacao.Movimentacao;
 import sptech.classicamoveis.Movimentacao.MovimentacaoComItensDto;
 import sptech.classicamoveis.Produto.service.ProdutoService;
 import sptech.classicamoveis.Transferencia.Transferencia;
-import sptech.classicamoveis.Venda.Venda;
+import sptech.classicamoveis.Venda.model.Venda;
 
 
 import java.util.List;
