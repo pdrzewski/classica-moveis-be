@@ -5,8 +5,8 @@ import sptech.classicamoveis.Movimentacao.ItemMovimentacao.ItemMovimentacao;
 import sptech.classicamoveis.Movimentacao.Movimentacao;
 import sptech.classicamoveis.Produto.dto.ProdutoRequestDTO;
 import sptech.classicamoveis.Produto.dto.ProdutoResponseDTO;
-import sptech.classicamoveis.Transferencia.Transferencia;
-import sptech.classicamoveis.Venda.model.Venda;
+import sptech.classicamoveis.Transferencia.model.Transferencia;
+import sptech.classicamoveis.Venda.Venda;
 
 import java.util.List;
 
