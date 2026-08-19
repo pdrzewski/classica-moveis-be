@@ -21,8 +21,8 @@ import sptech.classicamoveis.Produto.mapper.ProdutoMapper;
 import sptech.classicamoveis.Produto.model.Produto;
 import sptech.classicamoveis.Produto.repository.ProdutoRepository;
 import sptech.classicamoveis.Produto.service.ProdutoService;
-import sptech.classicamoveis.Transferencia.Transferencia;
-import sptech.classicamoveis.Transferencia.TransferenciaRepository;
+import sptech.classicamoveis.Transferencia.model.Transferencia;
+import sptech.classicamoveis.Transferencia.repository.TransferenciaRepository;
 import sptech.classicamoveis.Venda.Venda;
 import sptech.classicamoveis.Venda.VendaRepository;
 

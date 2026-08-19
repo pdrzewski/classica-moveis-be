@@ -1,4 +1,4 @@
-package sptech.classicamoveis.Transferencia;
+package sptech.classicamoveis.Transferencia.model;
 
 import jakarta.persistence.*;
 import lombok.*;
