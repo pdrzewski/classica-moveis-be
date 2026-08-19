@@ -1,9 +1,12 @@
-package sptech.classicamoveis.Permissao;
+package sptech.classicamoveis.Permissao.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sptech.classicamoveis.Permissao.dto.PermissaoRequestDto;
+import sptech.classicamoveis.Permissao.dto.PermissaoResponseDto;
+import sptech.classicamoveis.Permissao.service.PermissaoService;
 
 import java.util.List;
 

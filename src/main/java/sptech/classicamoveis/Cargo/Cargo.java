@@ -2,7 +2,7 @@ package sptech.classicamoveis.Cargo;
 
 import jakarta.persistence.*;
 import lombok.*;
-import sptech.classicamoveis.Permissao.Permissao;
+import sptech.classicamoveis.Permissao.model.Permissao;
 
 import java.util.HashSet;
 import java.util.Set;

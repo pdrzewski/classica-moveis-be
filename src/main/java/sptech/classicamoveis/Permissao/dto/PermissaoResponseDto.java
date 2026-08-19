@@ -1,4 +1,4 @@
-package sptech.classicamoveis.Permissao;
+package sptech.classicamoveis.Permissao.dto;
 
 public class PermissaoResponseDto {
 
