@@ -1,4 +1,4 @@
-package sptech.classicamoveis.Jwt;
+package sptech.classicamoveis.Jwt.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import sptech.classicamoveis.Colaborador.Colaborador;
 import sptech.classicamoveis.Colaborador.ColaboradorRepository;
+import sptech.classicamoveis.Jwt.model.UsuarioAutenticado;
 import sptech.classicamoveis.Usuario.model.Usuario;
 import sptech.classicamoveis.Usuario.repository.UsuarioRepository;
 

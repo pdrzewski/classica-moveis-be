@@ -1,4 +1,4 @@
-package sptech.classicamoveis.Jwt;
+package sptech.classicamoveis.Jwt.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +20,10 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import sptech.classicamoveis.Jwt.filter.AutenticacaoFilter;
+import sptech.classicamoveis.Jwt.provider.AutenticacaoProvider;
+import sptech.classicamoveis.Jwt.service.AutenticacaoService;
+import sptech.classicamoveis.Jwt.service.GerenciadorTokenJwt;
 
 import java.util.Arrays;
 import java.util.List;
