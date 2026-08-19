@@ -1,9 +1,12 @@
-package sptech.classicamoveis.Colaborador;
+package sptech.classicamoveis.Colaborador.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sptech.classicamoveis.Colaborador.dto.ColaboradorRequestDto;
+import sptech.classicamoveis.Colaborador.dto.ColaboradorResponseDto;
+import sptech.classicamoveis.Colaborador.service.ColaboradorService;
 
 import java.util.List;
 
@@ -25,7 +28,7 @@ public class ColaboradorController {
     }
 
     @PostMapping
-    public ResponseEntity<ColaboradorResponseDto> criar(@RequestBody  ColaboradorRequestDto dto) {
+    public ResponseEntity<ColaboradorResponseDto> criar(@RequestBody ColaboradorRequestDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(colaboradorService.criar(dto));
     }
 
