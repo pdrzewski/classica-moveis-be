@@ -1,4 +1,4 @@
-package sptech.classicamoveis.Jwt;
+package sptech.classicamoveis.Jwt.model;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

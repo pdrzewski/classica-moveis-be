@@ -1,4 +1,4 @@
-package sptech.classicamoveis.Jwt;
+package sptech.classicamoveis.Jwt.filter;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -16,6 +16,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
+import sptech.classicamoveis.Jwt.service.AutenticacaoService;
+import sptech.classicamoveis.Jwt.service.GerenciadorTokenJwt;
+import sptech.classicamoveis.Jwt.controller.LoginController;
 
 import java.io.IOException;
 

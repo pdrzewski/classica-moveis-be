@@ -1,4 +1,4 @@
-package sptech.classicamoveis.Jwt;
+package sptech.classicamoveis.Jwt.dto;
 
 import java.util.List;
 

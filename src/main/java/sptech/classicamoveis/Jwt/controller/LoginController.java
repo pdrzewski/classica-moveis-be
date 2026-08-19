@@ -1,4 +1,4 @@
-package sptech.classicamoveis.Jwt;
+package sptech.classicamoveis.Jwt.controller;
 
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,6 +10,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import sptech.classicamoveis.Jwt.service.GerenciadorTokenJwt;
+import sptech.classicamoveis.Jwt.dto.LoginDto;
+import sptech.classicamoveis.Jwt.dto.LoginResponseDto;
+import sptech.classicamoveis.Jwt.model.UsuarioAutenticado;
 
 import java.util.List;
 
