@@ -2,7 +2,7 @@ package sptech.classicamoveis.Movimentacao;
 
 import jakarta.persistence.*;
 import lombok.*;
-import sptech.classicamoveis.Colaborador.Colaborador;
+import sptech.classicamoveis.Colaborador.model.Colaborador;
 import sptech.classicamoveis.Movimentacao.TipoMovimentacao.TipoMovimentacao;
 
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package sptech.classicamoveis.Colaborador;
+package sptech.classicamoveis.Colaborador.model;
 
 
 import jakarta.persistence.*;

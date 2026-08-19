@@ -6,7 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import sptech.classicamoveis.Colaborador.ColaboradorRepository;
+import sptech.classicamoveis.Colaborador.repository.ColaboradorRepository;
 import sptech.classicamoveis.Jwt.service.AutenticacaoService;
 import sptech.classicamoveis.Usuario.model.Usuario;
 import sptech.classicamoveis.Usuario.repository.UsuarioRepository;

@@ -7,6 +7,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sptech.classicamoveis.Cargo.*;
+import sptech.classicamoveis.Colaborador.dto.ColaboradorRequestDto;
+import sptech.classicamoveis.Colaborador.model.Colaborador;
+import sptech.classicamoveis.Colaborador.repository.ColaboradorRepository;
+import sptech.classicamoveis.Colaborador.service.ColaboradorService;
 import sptech.classicamoveis.Usuario.model.Usuario;
 import sptech.classicamoveis.Usuario.repository.UsuarioRepository;
 
@@ -17,8 +21,10 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ColaboradorServiceTest {
- @Mock ColaboradorRepository repository; @Mock CargoRepository cargoRepository; @Mock
- UsuarioRepository usuarioRepository; @InjectMocks ColaboradorService service;
+ @Mock
+ ColaboradorRepository repository; @Mock CargoRepository cargoRepository; @Mock
+ UsuarioRepository usuarioRepository; @InjectMocks
+ ColaboradorService service;
  private ColaboradorRequestDto dto(Boolean ferias){return new ColaboradorRequestDto("Ana",2,3,ferias,LocalDate.of(2020,1,1),LocalDate.of(1990,1,1),2000.0,"CT",10);} private Cargo cargo(){return new Cargo(2,"GERENTE",new HashSet<>());} private Usuario usuario(){return new Usuario(3,"ana","h");} private Colaborador colaborador(){Colaborador c=new Colaborador();c.setId(1);c.setNome("Ana");c.setCargo(cargo());c.setUsuario(usuario());return c;}
  @Test void listaColaboradores(){when(repository.findAll()).thenReturn(List.of(colaborador()));assertEquals("Ana",service.listarTodos().getFirst().getNome());}
  @Test void buscaColaborador(){when(repository.findById(1)).thenReturn(Optional.of(colaborador()));assertEquals(2,service.buscarPorId(1).getCargoId());}

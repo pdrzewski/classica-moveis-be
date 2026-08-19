@@ -3,7 +3,7 @@ package sptech.classicamoveis.Jwt.model;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import sptech.classicamoveis.Colaborador.Colaborador;
+import sptech.classicamoveis.Colaborador.model.Colaborador;
 import sptech.classicamoveis.Usuario.model.Usuario;
 
 import java.util.Collection;
