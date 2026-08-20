@@ -16,6 +16,8 @@ public interface ProdutoService {
 
     ProdutoResponseDTO buscarPorId(Integer id);
 
+    List<ProdutoResponseDTO> buscarPorTermo(String termo);
+
     ProdutoResponseDTO criar(ProdutoRequestDTO dto);
 
     ProdutoResponseDTO atualizar(Integer id, ProdutoRequestDTO dto);
