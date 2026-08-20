@@ -27,6 +27,8 @@ import sptech.classicamoveis.Venda.model.Venda;
 import sptech.classicamoveis.Venda.repository.VendaRepository;
 
 import java.util.List;
+import java.util.Set;
+import java.util.LinkedHashSet;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +49,37 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Transactional(readOnly = true)
     public List<ProdutoResponseDTO> listarTodos() {
         return produtoRepository.findAll().stream()
+                .map(produtoMapper::toResponseDTO)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProdutoResponseDTO> buscarPorTermo(String termo) {
+        if (termo == null || termo.isBlank()) {
+            return listarTodos();
+        }
+
+        Set<Produto> encontrados = new LinkedHashSet<>();
+
+        // busca textual (nome, fornecedor, categoria, sku, codigoBarras, marca, unidadeMedida)
+        encontrados.addAll(produtoRepository.searchByTerm(termo));
+
+        // busca por inteiros (id, estoqueMinimo)
+        try {
+            Integer inteiro = Integer.valueOf(termo);
+            encontrados.addAll(produtoRepository.findByIdEqualsOrEstoqueMinimoEquals(inteiro, inteiro));
+        } catch (NumberFormatException ignored) {
+        }
+
+        // busca por valores numéricos (precoCusto, precoVenda)
+        try {
+            Double valor = Double.valueOf(termo.replace(',', '.'));
+            encontrados.addAll(produtoRepository.findByPrecoCustoEqualsOrPrecoVendaEquals(valor, valor));
+        } catch (NumberFormatException ignored) {
+        }
+
+        return encontrados.stream()
                 .map(produtoMapper::toResponseDTO)
                 .toList();
     }

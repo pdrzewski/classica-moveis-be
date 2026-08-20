@@ -23,6 +23,11 @@ public class ProdutoController {
         return ResponseEntity.ok(produtoService.listarTodos());
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<ProdutoResponseDTO>> buscarPorTermo(@RequestParam(value = "q", required = false) String q) {
+        return ResponseEntity.ok(produtoService.buscarPorTermo(q));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ProdutoResponseDTO> buscarPorId(@PathVariable Integer id) {
         return ResponseEntity.ok(produtoService.buscarPorId(id));
