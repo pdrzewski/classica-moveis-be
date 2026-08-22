@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sptech.classicamoveis.Categoria.Categoria;
-import sptech.classicamoveis.Categoria.CategoriaRepository;
+import sptech.classicamoveis.Categoria.repository.CategoriaRepository;
 import sptech.classicamoveis.Compra.Compra;
 import sptech.classicamoveis.Compra.CompraRepository;
 import sptech.classicamoveis.Fornecedor.model.Fornecedor;
