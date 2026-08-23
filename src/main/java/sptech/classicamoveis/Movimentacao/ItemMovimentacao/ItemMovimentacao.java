@@ -32,4 +32,11 @@ public class ItemMovimentacao {
 
     @Column(name = "preco_unitario", nullable = false)
     private Double precoUnitario;
+
+    @Column(name = "desconto")
+    private Double desconto;
+
+    public Double getSubtotal() {
+        return (qtd * precoUnitario) - (desconto != null ? desconto : 0);
+    }
 }

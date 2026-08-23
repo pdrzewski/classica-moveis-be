@@ -15,10 +15,6 @@ public class RelatorioController {
 
     private final RelatorioService relatorioService;
 
-    @GetMapping("/estoque")
-    public ResponseEntity<List<RelatorioEstoqueItemDto>> relatorioEstoque(@RequestParam Integer idLoja) {
-        return ResponseEntity.ok(relatorioService.relatorioEstoque(idLoja));
-    }
 
     @GetMapping("/vendas-por-fornecedor")
     public ResponseEntity<List<RelatorioVendaItemDto>> relatorioVendasPorFornecedor(
