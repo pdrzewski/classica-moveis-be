@@ -3,7 +3,7 @@ package sptech.classicamoveis.Estabelecimento;
 
 import jakarta.persistence.*;
 import lombok.*;
-import sptech.classicamoveis.Colaborador.Colaborador;
+import sptech.classicamoveis.Colaborador.model.Colaborador;
 import sptech.classicamoveis.Endereco.Endereco;
 
 @Entity

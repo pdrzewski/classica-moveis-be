@@ -3,7 +3,7 @@ package sptech.classicamoveis.Compra;
 import jakarta.persistence.*;
 import lombok.*;
 import sptech.classicamoveis.Estabelecimento.Estabelecimento;
-import sptech.classicamoveis.Fornecedor.Fornecedor;
+import sptech.classicamoveis.Fornecedor.model.Fornecedor;
 import sptech.classicamoveis.Movimentacao.Movimentacao;
 
 @Entity

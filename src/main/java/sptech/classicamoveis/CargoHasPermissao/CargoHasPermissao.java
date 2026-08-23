@@ -2,8 +2,8 @@ package sptech.classicamoveis.CargoHasPermissao;
 
 import jakarta.persistence.*;
 import lombok.*;
-import sptech.classicamoveis.Cargo.Cargo;
-import sptech.classicamoveis.Permissao.Permissao;
+import sptech.classicamoveis.Cargo.model.Cargo;
+import sptech.classicamoveis.Permissao.model.Permissao;
 
 @Entity
 @Table(name = "cargo_has_permissao")
