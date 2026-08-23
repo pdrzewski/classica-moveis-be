@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sptech.classicamoveis.Estabelecimento.dto.EstabelecimentoRequestDto;
+import sptech.classicamoveis.Estabelecimento.dto.EstabelecimentoComEnderecoRequestDto;
 import sptech.classicamoveis.Estabelecimento.dto.EstabelecimentoResponseDto;
 import sptech.classicamoveis.Estabelecimento.service.EstabelecimentoService;
 
@@ -28,7 +29,7 @@ public class EstabelecimentoController {
     }
 
     @PostMapping
-    public ResponseEntity<EstabelecimentoResponseDto> criar(@RequestBody EstabelecimentoRequestDto dto) {
+    public ResponseEntity<EstabelecimentoResponseDto> criar(@RequestBody EstabelecimentoComEnderecoRequestDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(estabelecimentoService.criar(dto));
     }
 
