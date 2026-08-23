@@ -55,7 +55,11 @@ public class UsuarioAutenticado implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        if (colaborador == null) {
+            return true;
+        }
+        Boolean emFerias = colaborador.getEmFerias();
+        return emFerias == null || !emFerias;
     }
 
     @Override

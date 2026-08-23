@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import sptech.classicamoveis.Cargo.model.Cargo; // Certifique-se de que os caminhos dos pacotes estão certos
 import sptech.classicamoveis.Cargo.repository.CargoRepository;
+import sptech.classicamoveis.Colaborador.AniversarioColaboradorDto;
+import sptech.classicamoveis.Colaborador.FeriasRequestDto;
 import sptech.classicamoveis.Colaborador.dto.ColaboradorRequestDto;
 import sptech.classicamoveis.Colaborador.dto.ColaboradorResponseDto;
 import sptech.classicamoveis.Colaborador.model.Colaborador;
@@ -12,6 +14,10 @@ import sptech.classicamoveis.Colaborador.repository.ColaboradorRepository;
 import sptech.classicamoveis.Usuario.model.Usuario;
 import sptech.classicamoveis.Usuario.repository.UsuarioRepository;
 
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,8 +52,73 @@ public class ColaboradorService {
     }
 
     public void deletar(Integer id) {
-        colaboradorRepository.delete(buscarEntidadePorId(id));
+        Colaborador colaborador = buscarEntidadePorId(id);
+        Integer usuarioId = colaborador.getUsuario() != null ? colaborador.getUsuario().getId() : null;
+
+        colaboradorRepository.delete(colaborador);
+
+        if (usuarioId != null) {
+            usuarioRepository.deleteById(usuarioId);
+        }
     }
+
+
+    public ColaboradorResponseDto registrarFerias(Integer id, FeriasRequestDto dto) {
+        if (dto.dataInicio() == null || dto.dataFim() == null) {
+            throw new IllegalArgumentException("dataInicio e dataFim são obrigatórias.");
+        }
+        if (dto.dataFim().isBefore(dto.dataInicio())) {
+            throw new IllegalArgumentException("dataFim não pode ser anterior à dataInicio.");
+        }
+
+        Colaborador colaborador = buscarEntidadePorId(id);
+        colaborador.setFeriasDataInicio(dto.dataInicio());
+        colaborador.setFeriasDataFim(dto.dataFim());
+        colaborador.setEmFerias(true);
+
+        return toResponseDTO(colaboradorRepository.save(colaborador));
+    }
+
+    public ColaboradorResponseDto encerrarFerias(Integer id) {
+        Colaborador colaborador = buscarEntidadePorId(id);
+        colaborador.setEmFerias(false);
+        return toResponseDTO(colaboradorRepository.save(colaborador));
+    }
+
+
+    public List<AniversarioColaboradorDto> buscarAniversariosProximos(int dias) {
+        LocalDate hoje = LocalDate.now();
+
+        return colaboradorRepository.findAll().stream()
+                .filter(c -> c.getDataNascimento() != null)
+                .map(c -> new AniversarioColaboradorDto(
+                        c.getId(),
+                        c.getNome(),
+                        c.getDataNascimento(),
+                        diasParaProximoAniversario(c.getDataNascimento(), hoje)
+                ))
+                .filter(dto -> dto.diasParaAniversario() <= dias)
+                .sorted(Comparator.comparingInt(AniversarioColaboradorDto::diasParaAniversario))
+                .collect(Collectors.toList());
+    }
+
+    private int diasParaProximoAniversario(LocalDate nascimento, LocalDate hoje) {
+        LocalDate proximo = ajustarParaAno(nascimento, hoje.getYear());
+        if (proximo.isBefore(hoje)) {
+            proximo = ajustarParaAno(nascimento, hoje.getYear() + 1);
+        }
+        return (int) ChronoUnit.DAYS.between(hoje, proximo);
+    }
+
+    private LocalDate ajustarParaAno(LocalDate data, int ano) {
+        try {
+            return data.withYear(ano);
+        } catch (DateTimeException e) {
+            // Caso de aniversário em 29/fev num ano não bissexto
+            return LocalDate.of(ano, 2, 28);
+        }
+    }
+
 
     private void preencherEntidade(Colaborador colaborador, ColaboradorRequestDto dto) {
         Cargo cargo = cargoRepository.findById(dto.cargoId())
@@ -79,6 +150,8 @@ public class ColaboradorService {
                 c.getCargo() != null ? c.getCargo().getCargo() : null,
                 c.getUsuario() != null ? c.getUsuario().getId() : null,
                 c.getEmFerias(),
+                c.getFeriasDataInicio(),
+                c.getFeriasDataFim(),
                 c.getDataAdmissao(),
                 c.getDataNascimento(),
                 c.getSalario(),

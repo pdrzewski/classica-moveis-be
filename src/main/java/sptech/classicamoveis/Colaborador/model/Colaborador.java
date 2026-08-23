@@ -1,6 +1,5 @@
 package sptech.classicamoveis.Colaborador.model;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 import sptech.classicamoveis.Cargo.model.Cargo;
@@ -33,6 +32,12 @@ public class Colaborador {
     @Column(name = "em_ferias")
     private Boolean emFerias;
 
+    @Column(name = "ferias_data_inicio")
+    private LocalDate feriasDataInicio;
+
+    @Column(name = "ferias_data_fim")
+    private LocalDate feriasDataFim;
+
     @Column(name = "data_admissao")
     private LocalDate dataAdmissao;
 
@@ -45,5 +50,4 @@ public class Colaborador {
     private String carteiraTrabalho;
 
     private Integer comissao;
-
 }
