@@ -1,4 +1,4 @@
-package sptech.classicamoveis.Estoque;
+package sptech.classicamoveis.Relatorio;
 
 public record RelatorioEstoqueItemDto(
         Integer produtoId,

@@ -2,6 +2,7 @@ package sptech.classicamoveis.Jwt;
 
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -25,11 +26,15 @@ public class AutenticacaoProvider implements AuthenticationProvider {
 
         UserDetails userDetails = this.usuarioAutorizacaoService.loadUserByUsername(username);
 
-        if (this.passwordEncoder.matches(password, userDetails.getPassword())) {
-            return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        } else {
+        if (!this.passwordEncoder.matches(password, userDetails.getPassword())) {
             throw new BadCredentialsException("Usuário ou Senha inválidos");
         }
+
+        if (!userDetails.isAccountNonLocked()) {
+            throw new LockedException("Colaborador está de férias e não pode acessar o sistema no momento.");
+        }
+
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
     @Override

@@ -10,6 +10,8 @@ public class ColaboradorResponseDto {
     private String cargoNome;
     private Integer usuarioId;
     private Boolean emFerias;
+    private LocalDate feriasDataInicio;
+    private LocalDate feriasDataFim;
     private LocalDate dataAdmissao;
     private LocalDate dataNascimento;
     private Double salario;
@@ -19,13 +21,18 @@ public class ColaboradorResponseDto {
     public ColaboradorResponseDto() {
     }
 
-    public ColaboradorResponseDto(Integer id, String nome, Integer cargoId, String cargoNome, Integer usuarioId, Boolean emFerias, LocalDate dataAdmissao, LocalDate dataNascimento, Double salario, String carteiraTrabalho, Integer comissao) {
+    public ColaboradorResponseDto(Integer id, String nome, Integer cargoId, String cargoNome, Integer usuarioId,
+                                  Boolean emFerias, LocalDate feriasDataInicio, LocalDate feriasDataFim,
+                                  LocalDate dataAdmissao, LocalDate dataNascimento, Double salario,
+                                  String carteiraTrabalho, Integer comissao) {
         this.id = id;
         this.nome = nome;
         this.cargoId = cargoId;
         this.cargoNome = cargoNome;
         this.usuarioId = usuarioId;
         this.emFerias = emFerias;
+        this.feriasDataInicio = feriasDataInicio;
+        this.feriasDataFim = feriasDataFim;
         this.dataAdmissao = dataAdmissao;
         this.dataNascimento = dataNascimento;
         this.salario = salario;
@@ -50,6 +57,12 @@ public class ColaboradorResponseDto {
 
     public Boolean getEmFerias() { return emFerias; }
     public void setEmFerias(Boolean emFerias) { this.emFerias = emFerias; }
+
+    public LocalDate getFeriasDataInicio() { return feriasDataInicio; }
+    public void setFeriasDataInicio(LocalDate feriasDataInicio) { this.feriasDataInicio = feriasDataInicio; }
+
+    public LocalDate getFeriasDataFim() { return feriasDataFim; }
+    public void setFeriasDataFim(LocalDate feriasDataFim) { this.feriasDataFim = feriasDataFim; }
 
     public LocalDate getDataAdmissao() { return dataAdmissao; }
     public void setDataAdmissao(LocalDate dataAdmissao) { this.dataAdmissao = dataAdmissao; }

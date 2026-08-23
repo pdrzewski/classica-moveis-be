@@ -1,4 +1,10 @@
 package sptech.classicamoveis.Colaborador;
 
-public class AniversarioColaboradorDto {
-}
+import java.time.LocalDate;
+
+public record AniversarioColaboradorDto(
+        Integer id,
+        String nome,
+        LocalDate dataNascimento,
+        int diasParaAniversario
+) {}

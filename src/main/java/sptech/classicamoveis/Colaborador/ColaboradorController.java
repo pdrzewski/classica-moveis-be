@@ -25,12 +25,12 @@ public class ColaboradorController {
     }
 
     @PostMapping
-    public ResponseEntity<ColaboradorResponseDto> criar(@RequestBody  ColaboradorRequestDto dto) {
+    public ResponseEntity<ColaboradorResponseDto> criar(@RequestBody ColaboradorRequestDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(colaboradorService.criar(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ColaboradorResponseDto> atualizar(@PathVariable Integer id, @RequestBody  ColaboradorRequestDto dto) {
+    public ResponseEntity<ColaboradorResponseDto> atualizar(@PathVariable Integer id, @RequestBody ColaboradorRequestDto dto) {
         return ResponseEntity.ok(colaboradorService.atualizar(id, dto));
     }
 
@@ -38,5 +38,21 @@ public class ColaboradorController {
     public ResponseEntity<Void> deletar(@PathVariable Integer id) {
         colaboradorService.deletar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/ferias")
+    public ResponseEntity<ColaboradorResponseDto> registrarFerias(@PathVariable Integer id, @RequestBody FeriasRequestDto dto) {
+        return ResponseEntity.ok(colaboradorService.registrarFerias(id, dto));
+    }
+
+    @PatchMapping("/{id}/ferias/encerrar")
+    public ResponseEntity<ColaboradorResponseDto> encerrarFerias(@PathVariable Integer id) {
+        return ResponseEntity.ok(colaboradorService.encerrarFerias(id));
+    }
+
+    @GetMapping("/aniversarios-proximos")
+    public ResponseEntity<List<AniversarioColaboradorDto>> aniversariosProximos(
+            @RequestParam(defaultValue = "30") int dias) {
+        return ResponseEntity.ok(colaboradorService.buscarAniversariosProximos(dias));
     }
 }

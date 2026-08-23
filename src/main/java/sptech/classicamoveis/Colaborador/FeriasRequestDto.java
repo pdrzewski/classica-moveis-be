@@ -1,4 +1,8 @@
 package sptech.classicamoveis.Colaborador;
 
-public class FeriasRequestDto {
-}
+import java.time.LocalDate;
+
+public record FeriasRequestDto(
+        LocalDate dataInicio,
+        LocalDate dataFim
+) {}

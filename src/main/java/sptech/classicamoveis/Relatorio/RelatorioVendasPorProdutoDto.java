@@ -1,4 +1,8 @@
 package sptech.classicamoveis.Relatorio;
 
-public class RelatorioVendasPorProdutoDto {
-}
+public record RelatorioVendasPorProdutoDto(
+        Integer produtoId,
+        String nomeProduto,
+        Long quantidadeVendida,
+        Double valorTotalVendido
+) {}
