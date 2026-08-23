@@ -10,6 +10,8 @@ import sptech.classicamoveis.Fornecedor.model.Fornecedor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
+@Getter
 public class Produto {
 
     @Id
@@ -50,4 +52,6 @@ public class Produto {
 
     @Column(nullable = false)
     private Boolean ativo;
+
+
 }

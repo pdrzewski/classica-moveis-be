@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sptech.classicamoveis.Colaborador.AniversarioColaboradorDto;
+import sptech.classicamoveis.Colaborador.FeriasRequestDto;
 import sptech.classicamoveis.Colaborador.dto.ColaboradorRequestDto;
 import sptech.classicamoveis.Colaborador.dto.ColaboradorResponseDto;
 import sptech.classicamoveis.Colaborador.service.ColaboradorService;

@@ -32,6 +32,25 @@ public class Cliente {
     @Column(length = 11)
     private String telefone2;
 
+    @Column(length = 100)
+    private String email;
+
+    @Column(length = 200)
+    private String observacao;
+
+    // Inscrição Estadual
+    @Column(length = 45)
+    private String ie;
+
+
+    public Integer getEnderecoId() {
+        return endereco.getId();
+    }
+
+    public void setEnderecoId(Integer enderecoId) {
+        this.endereco.setId(enderecoId);
+    }
+
     public Integer getId() {
         return id;
     }
@@ -102,24 +121,5 @@ public class Cliente {
 
     public void setIe(String ie) {
         this.ie = ie;
-    }
-
-    @Column(length = 45)
-    private String email;
-
-    @Column(length = 45)
-    private String observacao;
-
-    // Inscrição Estadual
-    @Column(length = 45)
-    private String ie;
-
-
-    public Integer getEnderecoId() {
-        return endereco.getId();
-    }
-
-    public void setEnderecoId(Integer enderecoId) {
-        this.endereco.setId(enderecoId);
     }
 }

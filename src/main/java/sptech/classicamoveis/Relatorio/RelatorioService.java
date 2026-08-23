@@ -22,7 +22,7 @@ public class RelatorioService {
 
         return estoques.stream()
                 .map(e -> {
-                    Integer minimo = e.getProduto().getEstoqueMin();
+                    Integer minimo = e.getProduto().getEstoqueMinimo();
                     boolean abaixoDoMinimo = minimo != null && e.getQtd() <= minimo;
                     return new RelatorioEstoqueItemDto(
                             e.getProduto().getId(),

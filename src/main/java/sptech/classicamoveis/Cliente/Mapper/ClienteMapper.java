@@ -12,13 +12,20 @@ public class ClienteMapper {
         return new ClienteResponseDto(
                 cliente.getId(),
                 cliente.getNome(),
-                cliente.getEnderecoId(),
                 cliente.getDocumento(),
                 cliente.getTelefone1(),
                 cliente.getTelefone2(),
                 cliente.getEmail(),
                 cliente.getObservacao(),
-                cliente.getIe()
+                cliente.getIe(),
+                cliente.getEndereco().getId(),
+                cliente.getEndereco().getCep(),
+                cliente.getEndereco().getLogradouro(),
+                cliente.getEndereco().getBairro(),
+                cliente.getEndereco().getCidade(),
+                cliente.getEndereco().getNumero(),
+                cliente.getEndereco().getComplemento(),
+                cliente.getEndereco().getEstado()
         );
     }
 
@@ -34,7 +41,6 @@ public class ClienteMapper {
         Cliente cliente = new Cliente();
         cliente.setId(responseDto.getId());
         cliente.setNome(responseDto.getNome());
-        cliente.setEnderecoId(responseDto.getEnderecoId());
         cliente.setDocumento(responseDto.getDocumento());
         cliente.setTelefone1(responseDto.getTelefone1());
         cliente.setTelefone2(responseDto.getTelefone2());

@@ -5,8 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sptech.classicamoveis.Endereco.Endereco;
+import sptech.classicamoveis.Endereco.repository.EnderecoRepository;
 import sptech.classicamoveis.Endereco.service.EnderecoService;
 import sptech.classicamoveis.Fornecedor.dto.FornecedorRequestDTO;
+import sptech.classicamoveis.Fornecedor.dto.FornecedorComEnderecoRequestDTO;
 import sptech.classicamoveis.Fornecedor.dto.FornecedorResponseDTO;
 import sptech.classicamoveis.Fornecedor.mapper.FornecedorMapper;
 import sptech.classicamoveis.Fornecedor.model.Fornecedor;
@@ -23,6 +25,7 @@ public class FornecedorServiceImpl implements FornecedorService {
     private final FornecedorRepository fornecedorRepository;
     private final FornecedorMapper fornecedorMapper;
     private final EnderecoService enderecoService;
+    private final EnderecoRepository enderecoRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -40,9 +43,18 @@ public class FornecedorServiceImpl implements FornecedorService {
     }
 
     @Override
-    public FornecedorResponseDTO criar(FornecedorRequestDTO dto) {
-        Endereco endereco = enderecoService.buscarEntidadePorId(dto.enderecoId());
-        Fornecedor fornecedor = fornecedorMapper.toEntity(dto, endereco);
+    public FornecedorResponseDTO criar(FornecedorComEnderecoRequestDTO dto) {
+        Endereco endereco = new Endereco();
+        endereco.setCep(dto.cep());
+        endereco.setLogradouro(dto.logradouro());
+        endereco.setBairro(dto.bairro());
+        endereco.setCidade(dto.cidade());
+        endereco.setNumero(dto.numero());
+        endereco.setComplemento(dto.complemento());
+        endereco.setEstado(dto.estado());
+        
+        Endereco enderecoSalvo = enderecoRepository.save(endereco);
+        Fornecedor fornecedor = fornecedorMapper.toEntityFromComEnderecoDTO(dto, enderecoSalvo);
         return fornecedorMapper.toResponseDTO(fornecedorRepository.save(fornecedor));
     }
 

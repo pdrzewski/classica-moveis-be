@@ -5,11 +5,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import sptech.classicamoveis.Cliente.Cliente;
 import sptech.classicamoveis.Cliente.dto.ClienteResponseDto;
+import sptech.classicamoveis.Cliente.dto.ClienteComEnderecoRequestDto;
 import sptech.classicamoveis.Cliente.service.ClienteService;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/clientes")
 public class ClienteController {
     private final ClienteService clienteService;
@@ -29,14 +30,16 @@ public class ClienteController {
     }
 
 
-    @GetMapping("/{nome}")
+    @GetMapping("/nome/{nome}")
     public ResponseEntity<List<ClienteResponseDto>> buscarClientesPorNome(@PathVariable String nome) {
         return ResponseEntity.ok(clienteService.buscarClientesPorNome(nome));
     }
 
+
+
     @PostMapping
-    public ResponseEntity<ClienteResponseDto> criarCliente(@RequestBody Cliente cliente) {
-        return ResponseEntity.ok(clienteService.criarCliente(cliente));
+    public ResponseEntity<ClienteResponseDto> criarCliente(@RequestBody ClienteComEnderecoRequestDto requestDto) {
+        return ResponseEntity.ok(clienteService.criarCliente(requestDto));
     }
 
     @DeleteMapping("/{id}")
