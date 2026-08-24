@@ -9,15 +9,13 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EstabelecimentoResponseDto {
-    private Integer id;
+public class EstabelecimentoComEnderecoRequestDto {
     private String nome;
     private String cnpj;
     private String telefone;
     private Integer responsavelId;
 
     // Dados do Endereço
-    private Integer enderecoId;
     private String cep;
     private String logradouro;
     private String bairro;

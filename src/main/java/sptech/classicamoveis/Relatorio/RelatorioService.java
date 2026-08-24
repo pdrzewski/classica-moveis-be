@@ -2,8 +2,6 @@ package sptech.classicamoveis.Relatorio;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import sptech.classicamoveis.Estoque.Estoque;
-import sptech.classicamoveis.Estoque.EstoqueRepository;
 import sptech.classicamoveis.Movimentacao.ItemMovimentacao.ItemMovimentacaoRepository;
 
 import java.time.LocalDateTime;
@@ -14,26 +12,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RelatorioService {
 
-    private final EstoqueRepository estoqueRepository;
+
     private final ItemMovimentacaoRepository itemMovimentacaoRepository;
-
-    public List<RelatorioEstoqueItemDto> relatorioEstoque(Integer idLoja) {
-        List<Estoque> estoques = estoqueRepository.findById_EstabelecimentoId(idLoja);
-
-        return estoques.stream()
-                .map(e -> {
-                    Integer minimo = e.getProduto().getEstoqueMin();
-                    boolean abaixoDoMinimo = minimo != null && e.getQtd() <= minimo;
-                    return new RelatorioEstoqueItemDto(
-                            e.getProduto().getId(),
-                            e.getProduto().getNome(),
-                            e.getQtd(),
-                            minimo,
-                            abaixoDoMinimo
-                    );
-                })
-                .collect(Collectors.toList());
-    }
 
     public List<RelatorioVendaItemDto> relatorioVendasPorFornecedor(Integer fornecedorId, Integer idLoja) {
         return itemMovimentacaoRepository.relatorioVendasPorFornecedor(fornecedorId, idLoja);

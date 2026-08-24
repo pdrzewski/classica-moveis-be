@@ -1,10 +1,9 @@
 package sptech.classicamoveis.Fornecedor.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public record FornecedorRequestDTO(
+public record FornecedorComEnderecoRequestDTO(
 
         @NotBlank(message = "Nome e obrigatorio")
         @Size(max = 45, message = "Nome deve ter no maximo 45 caracteres")
@@ -23,8 +22,24 @@ public record FornecedorRequestDTO(
         @Size(max = 11, message = "Telefone2 deve ter no maximo 11 caracteres")
         String telefone2,
 
-        @NotNull(message = "O id do endereco e obrigatorio")
-        Integer enderecoId
-) {
+        @NotBlank(message = "CEP é obrigatório")
+        String cep,
 
+        @NotBlank(message = "Logradouro é obrigatório")
+        String logradouro,
+
+        @NotBlank(message = "Bairro é obrigatório")
+        String bairro,
+
+        @NotBlank(message = "Cidade é obrigatório")
+        String cidade,
+
+        @NotBlank(message = "Número é obrigatório")
+        String numero,
+
+        String complemento,
+
+        @NotBlank(message = "Estado é obrigatório")
+        String estado
+) {
 }

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sptech.classicamoveis.Fornecedor.dto.FornecedorRequestDTO;
+import sptech.classicamoveis.Fornecedor.dto.FornecedorComEnderecoRequestDTO;
 import sptech.classicamoveis.Fornecedor.dto.FornecedorResponseDTO;
 import sptech.classicamoveis.Fornecedor.service.FornecedorService;
 
@@ -12,7 +13,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/fornecedores")
+@RequestMapping("/fornecedores")
 @RequiredArgsConstructor
 public class FornecedorController {
 
@@ -29,9 +30,9 @@ public class FornecedorController {
     }
 
     @PostMapping
-    public ResponseEntity<FornecedorResponseDTO> criar(@Valid @RequestBody FornecedorRequestDTO dto) {
+    public ResponseEntity<FornecedorResponseDTO> criar(@Valid @RequestBody FornecedorComEnderecoRequestDTO dto) {
         FornecedorResponseDTO criado = fornecedorService.criar(dto);
-        return ResponseEntity.created(URI.create("/api/fornecedores/" + criado.id())).body(criado);
+        return ResponseEntity.created(URI.create("/fornecedores/" + criado.id())).body(criado);
     }
 
     @PutMapping("/{id}")

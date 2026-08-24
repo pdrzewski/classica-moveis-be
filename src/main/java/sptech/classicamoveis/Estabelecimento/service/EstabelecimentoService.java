@@ -9,6 +9,7 @@ import sptech.classicamoveis.Endereco.Endereco;
 import sptech.classicamoveis.Endereco.repository.EnderecoRepository;
 import sptech.classicamoveis.Estabelecimento.Estabelecimento;
 import sptech.classicamoveis.Estabelecimento.dto.EstabelecimentoRequestDto;
+import sptech.classicamoveis.Estabelecimento.dto.EstabelecimentoComEnderecoRequestDto;
 import sptech.classicamoveis.Estabelecimento.dto.EstabelecimentoResponseDto;
 import sptech.classicamoveis.Estabelecimento.repository.EstabelecimentoRepository;
 import sptech.classicamoveis.Estabelecimento.mapper.EstabelecimentoMapper;
@@ -38,9 +39,28 @@ public class EstabelecimentoService {
         return estabelecimentoMapper.toResponseDTO(buscarEntidadePorId(id));
     }
 
-    public EstabelecimentoResponseDto criar(EstabelecimentoRequestDto dto) {
+    public EstabelecimentoResponseDto criar(EstabelecimentoComEnderecoRequestDto dto) {
+        Endereco endereco = new Endereco();
+        endereco.setCep(dto.getCep());
+        endereco.setLogradouro(dto.getLogradouro());
+        endereco.setBairro(dto.getBairro());
+        endereco.setCidade(dto.getCidade());
+        endereco.setNumero(dto.getNumero());
+        endereco.setComplemento(dto.getComplemento());
+        endereco.setEstado(dto.getEstado());
+        
+        Endereco enderecoSalvo = enderecoRepository.save(endereco);
+
+        Colaborador responsavel = colaboradorRepository.findById(dto.getResponsavelId())
+                .orElseThrow(() -> new EntityNotFoundException("Responsável não encontrado com id: " + dto.getResponsavelId()));
+
         Estabelecimento estabelecimento = new Estabelecimento();
-        preencherEntidade(estabelecimento, dto);
+        estabelecimento.setNome(dto.getNome());
+        estabelecimento.setCnpj(dto.getCnpj());
+        estabelecimento.setTelefone(dto.getTelefone());
+        estabelecimento.setEndereco(enderecoSalvo);
+        estabelecimento.setResponsavel(responsavel);
+
         return estabelecimentoMapper.toResponseDTO(estabelecimentoRepository.save(estabelecimento));
     }
 

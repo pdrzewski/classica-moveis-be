@@ -15,6 +15,16 @@ public interface ItemMovimentacaoRepository extends JpaRepository<ItemMovimentac
 
     List<ItemMovimentacao> findByMovimentacaoId(Integer movimentacaoId);
 
+    @Query("SELECT im FROM ItemMovimentacao im WHERE im.produto.id = :produtoId")
+    List<ItemMovimentacao> findByProdutoId(@Param("produtoId") Integer produtoId);
+
+    @Query("SELECT im FROM ItemMovimentacao im WHERE im.produto.id = :produtoId " +
+            "AND im.movimentacao.estabelecimentoOrigem.id = :estabelecimentoId " +
+            "OR im.movimentacao.estabelecimentoDestino.id = :estabelecimentoId")
+    List<ItemMovimentacao> findByProdutoIdAndEstabelecimentoId(
+            @Param("produtoId") Integer produtoId,
+            @Param("estabelecimentoId") Integer estabelecimentoId);
+
     @Query("SELECT new sptech.classicamoveis.Relatorio.RelatorioVendaItemDto(" +
             "v.idVenda, m.dataHora, e.nome, p.nome, im.qtd, im.precoUnitario, (im.qtd * im.precoUnitario)) " +
             "FROM ItemMovimentacao im " +
