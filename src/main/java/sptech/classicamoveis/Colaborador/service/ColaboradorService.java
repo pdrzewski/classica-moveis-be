@@ -156,7 +156,9 @@ public class ColaboradorService {
                 c.getDataNascimento(),
                 c.getSalario(),
                 c.getCarteiraTrabalho(),
-                c.getComissao()
+                c.getComissao(),
+                c.getEstabelecimento().getId(),
+                c.getCpf()
         );
     }
 }
