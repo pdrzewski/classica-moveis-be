@@ -17,6 +17,8 @@ public class ColaboradorResponseDto {
     private Double salario;
     private String carteiraTrabalho;
     private Integer comissao;
+    private Integer estabelecimentoId;
+    private String cpf;
 
     public ColaboradorResponseDto() {
     }
@@ -24,7 +26,7 @@ public class ColaboradorResponseDto {
     public ColaboradorResponseDto(Integer id, String nome, Integer cargoId, String cargoNome, Integer usuarioId,
                                   Boolean emFerias, LocalDate feriasDataInicio, LocalDate feriasDataFim,
                                   LocalDate dataAdmissao, LocalDate dataNascimento, Double salario,
-                                  String carteiraTrabalho, Integer comissao) {
+                                  String carteiraTrabalho, Integer comissao, Integer estabelecimentoId, String cpf) {
         this.id = id;
         this.nome = nome;
         this.cargoId = cargoId;
@@ -78,4 +80,20 @@ public class ColaboradorResponseDto {
 
     public Integer getComissao() { return comissao; }
     public void setComissao(Integer comissao) { this.comissao = comissao; }
+
+    public Integer getEstabelecimentoId() {
+        return estabelecimentoId;
+    }
+
+    public void setEstabelecimentoId(Integer estabelecimentoId) {
+        this.estabelecimentoId = estabelecimentoId;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
 }

@@ -19,5 +19,9 @@ public record ColaboradorRequestDto(
 
         String carteiraTrabalho,
 
-        Integer comissao
+        Integer comissao,
+
+        Integer estabelecimentoId,
+
+        String cpf
 ) {}
