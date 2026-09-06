@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import sptech.classicamoveis.Relatorio.RelatorioVendaItemDto;
 import sptech.classicamoveis.Relatorio.RelatorioVendasPorProdutoDto;
+import sptech.classicamoveis.Movimentacao.TipoMovimentacao.TipoMovimentacao;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,23 +16,31 @@ public interface ItemMovimentacaoRepository extends JpaRepository<ItemMovimentac
 
     List<ItemMovimentacao> findByMovimentacaoId(Integer movimentacaoId);
 
-    @Query("SELECT im FROM ItemMovimentacao im WHERE im.produto.id = :produtoId")
-    List<ItemMovimentacao> findByProdutoId(@Param("produtoId") Integer produtoId);
+    @Query("SELECT im FROM ItemMovimentacao im " +
+            "WHERE im.produto.id = :produtoId")
+    List<ItemMovimentacao> findByProdutoId(
+            @Param("produtoId") Integer produtoId);
 
-    @Query("SELECT im FROM ItemMovimentacao im WHERE im.produto.id = :produtoId " +
-            "AND im.movimentacao.estabelecimentoOrigem.id = :estabelecimentoId " +
-            "OR im.movimentacao.estabelecimentoDestino.id = :estabelecimentoId")
+    @Query("SELECT im FROM ItemMovimentacao im " +
+            "WHERE im.produto.id = :produtoId " +
+            "AND (im.movimentacao.estabelecimentoOrigem.id = :estabelecimentoId " +
+            "OR im.movimentacao.estabelecimentoDestino.id = :estabelecimentoId)")
     List<ItemMovimentacao> findByProdutoIdAndEstabelecimentoId(
             @Param("produtoId") Integer produtoId,
             @Param("estabelecimentoId") Integer estabelecimentoId);
 
     @Query("SELECT new sptech.classicamoveis.Relatorio.RelatorioVendaItemDto(" +
-            "v.idVenda, m.dataHora, e.nome, p.nome, im.qtd, im.precoUnitario, (im.qtd * im.precoUnitario)) " +
+            "m.id, " +
+            "m.dataHora, " +
+            "e.nome, " +
+            "p.nome, " +
+            "im.qtd, " +
+            "im.precoUnitario, " +
+            "(im.qtd * im.precoUnitario)) " +
             "FROM ItemMovimentacao im " +
             "JOIN im.movimentacao m " +
             "JOIN im.produto p " +
-            "JOIN Venda v ON v.movimentacao = m " +
-            "JOIN v.estabelecimento e " +
+            "LEFT JOIN m.estabelecimentoOrigem e " +
             "WHERE p.fornecedor.id = :fornecedorId " +
             "AND (:idLoja IS NULL OR e.id = :idLoja) " +
             "ORDER BY m.dataHora DESC")
@@ -40,14 +49,17 @@ public interface ItemMovimentacaoRepository extends JpaRepository<ItemMovimentac
             @Param("idLoja") Integer idLoja);
 
     @Query("SELECT new sptech.classicamoveis.Relatorio.RelatorioVendasPorProdutoDto(" +
-            "p.id, p.nome, SUM(im.qtd), SUM(im.qtd * im.precoUnitario)) " +
+            "p.id, " +
+            "p.nome, " +
+            "SUM(im.qtd), " +
+            "SUM(im.qtd * im.precoUnitario)) " +
             "FROM ItemMovimentacao im " +
             "JOIN im.movimentacao m " +
             "JOIN im.produto p " +
-            "JOIN Venda v ON v.movimentacao = m " +
-            "WHERE m.tipoMovimentacao = sptech.classicamoveis.Movimentacao.TipoMovimentacao.TipoMovimentacao.VENDA " +
+            "LEFT JOIN m.estabelecimentoOrigem e " +
+            "WHERE m.tipoMovimentacao = :tipoMovimentacao " +
             "AND (:categoriaId IS NULL OR p.categoria.id = :categoriaId) " +
-            "AND (:idLoja IS NULL OR v.estabelecimento.id = :idLoja) " +
+            "AND (:idLoja IS NULL OR e.id = :idLoja) " +
             "AND (:dataInicio IS NULL OR m.dataHora >= :dataInicio) " +
             "AND (:dataFim IS NULL OR m.dataHora <= :dataFim) " +
             "GROUP BY p.id, p.nome " +
@@ -56,5 +68,6 @@ public interface ItemMovimentacaoRepository extends JpaRepository<ItemMovimentac
             @Param("categoriaId") Integer categoriaId,
             @Param("idLoja") Integer idLoja,
             @Param("dataInicio") LocalDateTime dataInicio,
-            @Param("dataFim") LocalDateTime dataFim);
+            @Param("dataFim") LocalDateTime dataFim,
+            @Param("tipoMovimentacao") TipoMovimentacao tipoMovimentacao);
 }

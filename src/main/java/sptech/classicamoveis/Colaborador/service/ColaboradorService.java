@@ -142,6 +142,32 @@ public class ColaboradorService {
                 .orElseThrow(() -> new EntityNotFoundException("Colaborador não encontrado com id: " + id));
     }
 
+    public boolean estaDeFerias(Colaborador colaborador) {
+        if (colaborador == null) {
+            return false;
+        }
+
+        Boolean emFerias = colaborador.getEmFerias();
+        if (emFerias == null || !emFerias) {
+            return false;
+        }
+
+        LocalDate inicio = colaborador.getFeriasDataInicio();
+        LocalDate fim = colaborador.getFeriasDataFim();
+        if (inicio != null && fim != null) {
+            LocalDate hoje = LocalDate.now();
+            return !hoje.isBefore(inicio) && !hoje.isAfter(fim);
+        }
+
+        return true;
+    }
+
+    public boolean estaDeFerias(Integer colaboradorId) {
+        return colaboradorRepository.findById(colaboradorId)
+                .map(this::estaDeFerias)
+                .orElse(false);
+    }
+
     private ColaboradorResponseDto toResponseDTO(Colaborador c) {
         return new ColaboradorResponseDto(
                 c.getId(),

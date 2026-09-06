@@ -200,7 +200,8 @@ public class MovimentacaoService {
     private StatusMovimentacao definirStatusInicial(TipoMovimentacao tipo) {
         return switch (tipo) {
             case VENDA -> StatusMovimentacao.PENDENTE;
-            case COMPRA, TRANSFERENCIA, AJUSTE_ENTRADA, AJUSTE_SAIDA -> StatusMovimentacao.CONCLUIDO;
+            case COMPRA, TRANSFERENCIA, AJUSTE_ENTRADA, AJUSTE_SAIDA, DEVOLUÇÃO -> StatusMovimentacao.CONCLUIDO;
+            default -> StatusMovimentacao.PENDENTE;
         };
     }
 

@@ -39,4 +39,52 @@ public class ItemMovimentacao {
     public Double getSubtotal() {
         return (qtd * precoUnitario) - (desconto != null ? desconto : 0);
     }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getQtd() {
+        return qtd;
+    }
+
+    public void setQtd(Integer qtd) {
+        this.qtd = qtd;
+    }
+
+    public Movimentacao getMovimentacao() {
+        return movimentacao;
+    }
+
+    public void setMovimentacao(Movimentacao movimentacao) {
+        this.movimentacao = movimentacao;
+    }
+
+    public Produto getProduto() {
+        return produto;
+    }
+
+    public void setProduto(Produto produto) {
+        this.produto = produto;
+    }
+
+    public Double getPrecoUnitario() {
+        return precoUnitario;
+    }
+
+    public void setPrecoUnitario(Double precoUnitario) {
+        this.precoUnitario = precoUnitario;
+    }
+
+    public Double getDesconto() {
+        return desconto;
+    }
+
+    public void setDesconto(Double desconto) {
+        this.desconto = desconto;
+    }
 }
