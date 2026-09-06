@@ -1,6 +1,5 @@
 package sptech.classicamoveis.Relatorio;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -12,12 +11,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/relatorios")
-@RequiredArgsConstructor
 public class RelatorioController {
 
     private final RelatorioService relatorioService;
     private final RelatorioPdfGenerator relatorioPdfGenerator;
 
+    // Construtor manual para injetar as dependências sem depender do Lombok
+    public RelatorioController(RelatorioService relatorioService, RelatorioPdfGenerator relatorioPdfGenerator) {
+        this.relatorioService = relatorioService;
+        this.relatorioPdfGenerator = relatorioPdfGenerator;
+    }
 
     @GetMapping("/vendas-por-fornecedor")
     public ResponseEntity<List<RelatorioVendaItemDto>> relatorioVendasPorFornecedor(

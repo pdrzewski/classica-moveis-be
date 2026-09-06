@@ -1,19 +1,20 @@
 package sptech.classicamoveis.Relatorio;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import sptech.classicamoveis.Movimentacao.ItemMovimentacao.ItemMovimentacaoRepository;
+import sptech.classicamoveis.Movimentacao.TipoMovimentacao.TipoMovimentacao;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class RelatorioService {
 
-
     private final ItemMovimentacaoRepository itemMovimentacaoRepository;
+
+    public RelatorioService(ItemMovimentacaoRepository itemMovimentacaoRepository) {
+        this.itemMovimentacaoRepository = itemMovimentacaoRepository;
+    }
 
     public List<RelatorioVendaItemDto> relatorioVendasPorFornecedor(Integer fornecedorId, Integer idLoja) {
         return itemMovimentacaoRepository.relatorioVendasPorFornecedor(fornecedorId, idLoja);
@@ -26,13 +27,14 @@ public class RelatorioService {
             LocalDateTime dataInicio,
             LocalDateTime dataFim) {
 
-        List<RelatorioVendasPorProdutoDto> resultado =
-                itemMovimentacaoRepository.relatorioVendasPorProduto(categoriaId, idLoja, dataInicio, dataFim);
+        List<RelatorioVendasPorProdutoDto> resultado = itemMovimentacaoRepository.relatorioVendasPorProduto(
+                categoriaId, idLoja, dataInicio, dataFim, TipoMovimentacao.VENDA
+        );
 
         if (produtoIds != null && !produtoIds.isEmpty()) {
-            resultado = resultado.stream()
+            return resultado.stream()
                     .filter(dto -> produtoIds.contains(dto.produtoId()))
-                    .collect(Collectors.toList());
+                    .toList();
         }
 
         return resultado;
