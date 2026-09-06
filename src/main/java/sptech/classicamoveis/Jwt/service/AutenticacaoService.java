@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import sptech.classicamoveis.Colaborador.model.Colaborador;
 import sptech.classicamoveis.Colaborador.repository.ColaboradorRepository;
+import sptech.classicamoveis.Colaborador.service.ColaboradorService;
 import sptech.classicamoveis.Jwt.model.UsuarioAutenticado;
 import sptech.classicamoveis.Usuario.model.Usuario;
 import sptech.classicamoveis.Usuario.repository.UsuarioRepository;
@@ -15,10 +16,14 @@ public class AutenticacaoService implements UserDetailsService {
 
     private final UsuarioRepository usuarioRepository;
     private final ColaboradorRepository colaboradorRepository;
+    private final ColaboradorService colaboradorService;
 
-    public AutenticacaoService(UsuarioRepository usuarioRepository, ColaboradorRepository colaboradorRepository) {
+    public AutenticacaoService(UsuarioRepository usuarioRepository,
+                               ColaboradorRepository colaboradorRepository,
+                               ColaboradorService colaboradorService) {
         this.usuarioRepository = usuarioRepository;
         this.colaboradorRepository = colaboradorRepository;
+        this.colaboradorService = colaboradorService;
     }
 
     @Override
@@ -27,7 +32,8 @@ public class AutenticacaoService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário ou Senha inválidos"));
 
         Colaborador colaborador = colaboradorRepository.findByUsuario_Login(login).orElse(null);
+        boolean deFerias = colaboradorService.estaDeFerias(colaborador);
 
-        return new UsuarioAutenticado(usuario, colaborador);
+        return new UsuarioAutenticado(usuario, colaborador, deFerias);
     }
 }

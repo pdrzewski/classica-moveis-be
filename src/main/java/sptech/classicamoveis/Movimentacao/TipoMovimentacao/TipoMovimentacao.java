@@ -5,5 +5,6 @@ public enum TipoMovimentacao {
     COMPRA,
     TRANSFERENCIA,
     AJUSTE_ENTRADA,
-    AJUSTE_SAIDA
+    AJUSTE_SAIDA,
+    DEVOLUÇÃO
 }

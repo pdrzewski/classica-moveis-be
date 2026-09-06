@@ -14,10 +14,12 @@ public class UsuarioAutenticado implements UserDetails {
 
     private final Usuario usuario;
     private final Colaborador colaborador;
+    private final boolean deFerias;
 
-    public UsuarioAutenticado(Usuario usuario, Colaborador colaborador) {
+    public UsuarioAutenticado(Usuario usuario, Colaborador colaborador, boolean deFerias) {
         this.usuario = usuario;
         this.colaborador = colaborador;
+        this.deFerias = deFerias;
     }
 
     public Usuario getUsuario() {
@@ -55,11 +57,7 @@ public class UsuarioAutenticado implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        if (colaborador == null) {
-            return true;
-        }
-        Boolean emFerias = colaborador.getEmFerias();
-        return emFerias == null || !emFerias;
+        return !deFerias;
     }
 
     @Override
