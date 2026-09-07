@@ -1,6 +1,7 @@
 package sptech.classicamoveis.Jwt.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -40,18 +41,14 @@ public class SecurityConfiguracao {
 
     private static final String[] URLS_PERMITIDAS = {
             "/login/**",
-            "/h2-console/**",
             "/error/**",
             "/swagger-ui/**",
-            "/v3/api-docs/**",
-            "/api/usuarios",
-            "/api/cargos",
-            "/api/colaboradores"
+            "/v3/api-docs/**"
     };
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
+    public SecurityFilterChain filterChain(HttpSecurity http, AutenticacaoFilter autenticacaoFilter) throws Exception {
+        http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .cors(Customizer.withDefaults())
                 .csrf(CsrfConfigurer<HttpSecurity>::disable)
                 .authorizeHttpRequests(authorize -> authorize
@@ -61,7 +58,7 @@ public class SecurityConfiguracao {
                 .exceptionHandling(handling -> handling.authenticationEntryPoint(autenticacaoJwtEntryPoint))
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http.addFilterBefore(jwtAuthenticationFilterBean(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(autenticacaoFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -75,9 +72,10 @@ public class SecurityConfiguracao {
     }
 
     @Bean
-    public AutenticacaoFilter jwtAuthenticationFilterBean() {
-        return new AutenticacaoFilter(autenticacaoService, jwtAuthenticationUtilBean());
+    public AutenticacaoFilter jwtAuthenticationFilterBean(GerenciadorTokenJwt gerenciadorTokenJwt) {
+        return new AutenticacaoFilter(autenticacaoService, gerenciadorTokenJwt);
     }
+
 
     @Bean
     public FilterRegistrationBean<AutenticacaoFilter> desabilitarRegistroAutomatico(AutenticacaoFilter filter) {
@@ -87,8 +85,10 @@ public class SecurityConfiguracao {
     }
 
     @Bean
-    public GerenciadorTokenJwt jwtAuthenticationUtilBean() {
-        return new GerenciadorTokenJwt();
+    public GerenciadorTokenJwt jwtAuthenticationUtilBean(
+            @Value("${jwt.secret}") String secret,
+            @Value("${jwt.validity}") long validity) {
+        return new GerenciadorTokenJwt(secret, validity);
     }
 
     @Bean

@@ -37,7 +37,7 @@ public class UsuarioService {
 
         Usuario usuario = new Usuario();
         usuario.setLogin(dto.login());
-        usuario.setSenha(passwordEncoder.encode(dto.senha())); // nunca salva em texto puro
+        usuario.setSenha(passwordEncoder.encode(dto.senha())); // depois
 
         return toResponseDTO(usuarioRepository.save(usuario));
     }
