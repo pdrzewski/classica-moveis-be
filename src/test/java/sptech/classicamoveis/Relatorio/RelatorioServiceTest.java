@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import sptech.classicamoveis.Movimentacao.ItemMovimentacao.ItemMovimentacaoRepository;
+import sptech.classicamoveis.Movimentacao.TipoMovimentacao.TipoMovimentacao;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -43,7 +44,8 @@ class RelatorioServiceTest {
           1,
           2,
           null,
-          null
+          null,
+           TipoMovimentacao.VENDA
   )).thenReturn(x);
 
   assertSame(
@@ -54,6 +56,7 @@ class RelatorioServiceTest {
                   null,
                   null,
                   null
+
           )
   );
  }
@@ -67,6 +70,7 @@ class RelatorioServiceTest {
   when(b.produtoId()).thenReturn(2);
 
   when(repository.relatorioVendasPorProduto(
+          any(),
           any(),
           any(),
           any(),

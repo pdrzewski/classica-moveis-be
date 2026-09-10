@@ -2,6 +2,7 @@ package sptech.classicamoveis.Jwt.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -26,6 +27,9 @@ import java.util.List;
 public class LoginController {
 
     public static final String COOKIE_NOME = "moveis_jwt_token";
+
+    @Value("${app.cookie.secure:false}")
+    private boolean cookieSecure;
 
     private final AuthenticationManager authenticationManager;
     private final GerenciadorTokenJwt jwtTokenManager;
@@ -70,10 +74,10 @@ public class LoginController {
     private ResponseCookie montarCookie(String token, long maxAgeSegundos) {
         return ResponseCookie.from(COOKIE_NOME, token)
                 .httpOnly(true)
-                .secure(false)
+                .secure(cookieSecure)
                 .path("/")
                 .maxAge(maxAgeSegundos)
-                .sameSite("Lax")
+                .sameSite("Strict")
                 .build();
     }
 }
