@@ -1,5 +1,6 @@
 package sptech.classicamoveis.Movimentacao.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sptech.classicamoveis.Movimentacao.service.EstoqueService;
@@ -9,6 +10,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/estoque")
+@Tag(name = "Estoque", description = "Consulta de saldo, inventário e extrato de movimentações por estabelecimento")
 public class EstoqueController {
 
     private final EstoqueService estoqueService;

@@ -1,5 +1,6 @@
 package sptech.classicamoveis.Cliente.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/clientes")
+@Tag(name = "Clientes", description = "Cadastro e consulta de clientes")
 public class ClienteController {
     private final ClienteService clienteService;
 

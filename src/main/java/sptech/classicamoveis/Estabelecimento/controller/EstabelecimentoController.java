@@ -1,5 +1,6 @@
 package sptech.classicamoveis.Estabelecimento.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/estabelecimentos")
 @RequiredArgsConstructor
+@Tag(name = "Estabelecimentos", description = "Lojas/filiais da rede")
 public class EstabelecimentoController {
 
     private final EstabelecimentoService estabelecimentoService;

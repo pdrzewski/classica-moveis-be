@@ -1,5 +1,6 @@
 package sptech.classicamoveis.Usuario.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +12,9 @@ import sptech.classicamoveis.Usuario.service.UsuarioService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping("/usuarios")
 @RequiredArgsConstructor
+@Tag(name = "Usuários", description = "Usuários do sistema")
 public class UsuarioController {
 
     private final UsuarioService usuarioService;

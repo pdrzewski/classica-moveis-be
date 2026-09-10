@@ -1,5 +1,6 @@
 package sptech.classicamoveis.Permissao.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +12,9 @@ import sptech.classicamoveis.Permissao.service.PermissaoService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/permissoes")
+@RequestMapping("/permissoes")
 @RequiredArgsConstructor
+@Tag(name = "Permissões", description = "Permissões de acesso")
 public class PermissaoController {
 
     private final PermissaoService permissaoService;

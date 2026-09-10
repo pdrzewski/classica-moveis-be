@@ -1,5 +1,6 @@
 package sptech.classicamoveis.Categoria.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/categorias")
 @RequiredArgsConstructor
+@Tag(name = "Categorias", description = "Categorias de produtos")
 public class CategoriaController {
 
     private final CategoriaService categoriaService;

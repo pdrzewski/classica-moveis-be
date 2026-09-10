@@ -1,8 +1,13 @@
 package sptech.classicamoveis.Jwt.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Credenciais de acesso")
 public class LoginDto {
 
+    @Schema(example = "joao.lima")
     private String login;
+    @Schema(example = "SenhaForte@123")
     private String senha;
 
     public LoginDto() {

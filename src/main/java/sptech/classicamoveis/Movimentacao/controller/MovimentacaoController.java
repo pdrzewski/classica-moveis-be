@@ -1,5 +1,6 @@
 package sptech.classicamoveis.Movimentacao.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sptech.classicamoveis.Movimentacao.dto.MovimentacaoRequestDto;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/movimentacoes")
+@Tag(name = "Movimentações", description = "Vendas, compras, transferências e devoluções")
 public class MovimentacaoController {
 
     private final MovimentacaoService movimentacaoService;

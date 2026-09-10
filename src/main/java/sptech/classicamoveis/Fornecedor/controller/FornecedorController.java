@@ -1,5 +1,6 @@
 package sptech.classicamoveis.Fornecedor.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/fornecedores")
 @RequiredArgsConstructor
+@Tag(name = "Fornecedores", description = "Cadastro e consulta de fornecedores")
 public class FornecedorController {
 
     private final FornecedorService fornecedorService;

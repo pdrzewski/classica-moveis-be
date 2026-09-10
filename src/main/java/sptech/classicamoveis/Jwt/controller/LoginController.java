@@ -1,5 +1,6 @@
 package sptech.classicamoveis.Jwt.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/login")
+@Tag(name = "Autenticação", description = "Login, logout e emissão de token JWT")
 public class LoginController {
 
     public static final String COOKIE_NOME = "moveis_jwt_token";
