@@ -5,10 +5,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sptech.classicamoveis.Categoria.Categoria;
 import sptech.classicamoveis.Categoria.repository.CategoriaRepository;
+import sptech.classicamoveis.Estabelecimento.Estabelecimento;
+import sptech.classicamoveis.Estabelecimento.repository.EstabelecimentoRepository;
 import sptech.classicamoveis.Fornecedor.model.Fornecedor;
 import sptech.classicamoveis.Fornecedor.repository.FornecedorRepository;
 import sptech.classicamoveis.Movimentacao.Movimentacao;
 import sptech.classicamoveis.Movimentacao.MovimentacaoRepository;
+import sptech.classicamoveis.Movimentacao.service.EstoqueService;
+import sptech.classicamoveis.Produto.dto.ProdutoEstoqueBaixoDTO;
 import sptech.classicamoveis.Produto.dto.ProdutoRequestDTO;
 import sptech.classicamoveis.Produto.dto.ProdutoResponseDTO;
 import sptech.classicamoveis.Produto.exception.RecursoNaoEncontradoException;
@@ -17,6 +21,7 @@ import sptech.classicamoveis.Produto.model.Produto;
 import sptech.classicamoveis.Produto.repository.ProdutoRepository;
 import sptech.classicamoveis.Produto.service.ProdutoService;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +36,8 @@ public class ProdutoServiceImpl implements ProdutoService {
     private final CategoriaRepository categoriaRepository;
     private final MovimentacaoRepository movimentacaoRepository;
     private final ProdutoMapper produtoMapper;
+    private final EstoqueService estoqueService;
+    private final EstabelecimentoRepository estabelecimentoRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -103,6 +110,28 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Transactional(readOnly = true)
     public List<Movimentacao> listarTodasMovimentacoes() {
         return movimentacaoRepository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProdutoEstoqueBaixoDTO> listarProdutosAbaixoDoEstoqueMinimo() {
+        List<Estabelecimento> estabelecimentos = estabelecimentoRepository.findAll();
+        List<ProdutoEstoqueBaixoDTO> produtosAbaixoDoMinimo = new ArrayList<>();
+
+        for (Produto produto : produtoRepository.findAll()) {
+            long estoqueAtual = 0L;
+            for (Estabelecimento estabelecimento : estabelecimentos) {
+                estoqueAtual += estoqueService.calcularSaldoProduto(estabelecimento.getId(), produto.getId());
+            }
+
+            if (estoqueAtual <= produto.getEstoqueMinimo()) {
+                produtosAbaixoDoMinimo.add(
+                        new ProdutoEstoqueBaixoDTO(produtoMapper.toResponseDTO(produto), estoqueAtual)
+                );
+            }
+        }
+
+        return produtosAbaixoDoMinimo;
     }
 
     private Produto buscarEntidadePorId(Integer id) {

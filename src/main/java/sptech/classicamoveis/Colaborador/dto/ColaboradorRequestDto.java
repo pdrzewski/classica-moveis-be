@@ -1,27 +1,30 @@
 package sptech.classicamoveis.Colaborador.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.LocalDate;
 
+@Schema(description = "Dados para criação/atualização de colaborador")
 public record ColaboradorRequestDto(
-        String nome,
+        @Schema(example = "João Pedro Lima") String nome,
 
-        Integer cargoId,
+        @Schema(example = "2") Integer cargoId,
 
-        Integer usuarioId,
+        @Schema(example = "5") Integer usuarioId,
 
-        Boolean emFerias,
+        @Schema(example = "false") Boolean emFerias,
 
-        LocalDate dataAdmissao,
+        @Schema(example = "2023-03-01") LocalDate dataAdmissao,
 
-        LocalDate dataNascimento,
+        @Schema(example = "1995-07-22") LocalDate dataNascimento,
 
-        Double salario,
+        @Schema(example = "2200.00") Double salario,
 
-        String carteiraTrabalho,
+        @Schema(example = "1234567") String carteiraTrabalho,
 
-        Integer comissao,
+        @Schema(description = "Percentual de comissão sobre vendas", example = "3") Integer comissao,
 
-        Integer estabelecimentoId,
+        @Schema(example = "1") Integer estabelecimentoId,
 
-        String cpf
+        @Schema(example = "38912233045") String cpf
 ) {}

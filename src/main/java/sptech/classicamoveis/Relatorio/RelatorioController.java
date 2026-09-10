@@ -1,5 +1,6 @@
 package sptech.classicamoveis.Relatorio;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -10,7 +11,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/relatorios")
+@RequestMapping("/relatorios")
+@Tag(name = "Relatórios", description = "Relatórios gerenciais de vendas por fornecedor/produto (JSON ou PDF)")
 public class RelatorioController {
 
     private final RelatorioService relatorioService;

@@ -1,8 +1,13 @@
 package sptech.classicamoveis.Usuario.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Dados de usuário retornados pela API")
 public class UsuarioResponseDto {
 
+    @Schema(example = "5")
     private Integer id;
+    @Schema(example = "joao.lima")
     private String login;
 
     public UsuarioResponseDto() {

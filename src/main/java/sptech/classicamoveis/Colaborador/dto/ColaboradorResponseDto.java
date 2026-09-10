@@ -1,23 +1,41 @@
 package sptech.classicamoveis.Colaborador.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.LocalDate;
 
+@Schema(description = "Dados de colaborador retornados pela API")
 public class ColaboradorResponseDto {
 
+    @Schema(example = "5")
     private Integer id;
+    @Schema(example = "João Pedro Lima")
     private String nome;
+    @Schema(example = "2")
     private Integer cargoId;
+    @Schema(example = "Vendedor")
     private String cargoNome;
+    @Schema(example = "5")
     private Integer usuarioId;
+    @Schema(example = "false")
     private Boolean emFerias;
+    @Schema(example = "2026-12-01")
     private LocalDate feriasDataInicio;
+    @Schema(example = "2026-12-30")
     private LocalDate feriasDataFim;
+    @Schema(example = "2023-03-01")
     private LocalDate dataAdmissao;
+    @Schema(example = "1995-07-22")
     private LocalDate dataNascimento;
+    @Schema(example = "2200.00")
     private Double salario;
+    @Schema(example = "1234567")
     private String carteiraTrabalho;
+    @Schema(example = "3")
     private Integer comissao;
+    @Schema(example = "1")
     private Integer estabelecimentoId;
+    @Schema(example = "38912233045")
     private String cpf;
 
     public ColaboradorResponseDto() {

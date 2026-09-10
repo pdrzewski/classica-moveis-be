@@ -1,5 +1,6 @@
 package sptech.classicamoveis.Colaborador.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +15,9 @@ import sptech.classicamoveis.Colaborador.service.ColaboradorService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/colaboradores")
+@RequestMapping("/colaboradores")
 @RequiredArgsConstructor
+@Tag(name = "Colaboradores", description = "Cadastro de colaboradores, férias e aniversariantes")
 @PreAuthorize("hasRole('ADMIN')")
 public class ColaboradorController {
 

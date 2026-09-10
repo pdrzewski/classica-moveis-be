@@ -1,5 +1,6 @@
 package sptech.classicamoveis.Cargo.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +12,9 @@ import sptech.classicamoveis.Cargo.service.CargoService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/cargos")
+@RequestMapping("/cargos")
 @RequiredArgsConstructor
+@Tag(name = "Cargos", description = "Cargos e suas permissões")
 public class CargoController {
 
     private final CargoService cargoService;
