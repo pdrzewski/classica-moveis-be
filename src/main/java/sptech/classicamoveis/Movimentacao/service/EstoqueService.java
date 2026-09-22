@@ -3,13 +3,19 @@ package sptech.classicamoveis.Movimentacao.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sptech.classicamoveis.Colaborador.repository.ColaboradorRepository;
+import sptech.classicamoveis.Estabelecimento.repository.EstabelecimentoRepository;
 import sptech.classicamoveis.Movimentacao.Movimentacao;
 import sptech.classicamoveis.Movimentacao.ItemMovimentacao.ItemMovimentacao;
 import sptech.classicamoveis.Movimentacao.ItemMovimentacao.ItemMovimentacaoRepository;
 import sptech.classicamoveis.Movimentacao.TipoMovimentacao.TipoMovimentacao;
 import sptech.classicamoveis.Movimentacao.StatusMovimentacao.StatusMovimentacao;
 import sptech.classicamoveis.Movimentacao.MovimentacaoRepository;
+import sptech.classicamoveis.Movimentacao.dto.EstoqueProdutoDto;
+import sptech.classicamoveis.Movimentacao.dto.InventarioProdutoDto;
+import sptech.classicamoveis.Produto.mapper.ProdutoMapper;
 import sptech.classicamoveis.Produto.model.Produto;
+import sptech.classicamoveis.Produto.repository.ProdutoRepository;
 
 import java.util.List;
 
@@ -20,6 +26,10 @@ public class EstoqueService {
 
     private final MovimentacaoRepository movimentacaoRepository;
     private final ItemMovimentacaoRepository itemRepository;
+    private final ProdutoRepository produtoRepository;
+    private final ProdutoMapper produtoMapper;
+    private final ColaboradorRepository colaboradorRepository;
+    private final EstabelecimentoRepository estabelecimentoRepository;
 
 
     /**

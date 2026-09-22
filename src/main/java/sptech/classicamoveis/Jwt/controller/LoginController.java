@@ -62,7 +62,10 @@ public class LoginController {
                 .map(Object::toString)
                 .toList();
 
-        return ResponseEntity.ok(new LoginResponseDto(usuarioAutenticado.getUsername(), permissoes));
+        return ResponseEntity.ok(new LoginResponseDto(
+                usuarioAutenticado.getUsuario().getId(),
+                usuarioAutenticado.getUsername(),
+                permissoes));
     }
 
     @PostMapping("/sair")

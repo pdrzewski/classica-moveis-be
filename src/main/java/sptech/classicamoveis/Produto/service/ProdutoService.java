@@ -13,6 +13,8 @@ public interface ProdutoService {
 
     List<ProdutoResponseDTO> buscarPorTermo(String termo);
 
+    List<ProdutoResponseDTO> buscarPorFornecedor(Long fornecedorId);
+
     ProdutoResponseDTO buscarPorId(Integer id);
 
     ProdutoResponseDTO criar(ProdutoRequestDTO dto);

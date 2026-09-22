@@ -22,4 +22,6 @@ public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
 	List<Produto> findByPrecoCustoEqualsOrPrecoVendaEquals(Double precoCusto, Double precoVenda);
 
 	List<Produto> findByIdEqualsOrEstoqueMinimoEquals(Integer id, Integer estoqueMinimo);
+
+	List<Produto> findByFornecedor_Id(Long fornecedorId);
 }

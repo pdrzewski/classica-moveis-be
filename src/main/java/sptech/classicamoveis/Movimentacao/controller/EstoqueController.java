@@ -1,11 +1,14 @@
 package sptech.classicamoveis.Movimentacao.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sptech.classicamoveis.Movimentacao.dto.EstoqueProdutoDto;
 import sptech.classicamoveis.Movimentacao.service.EstoqueService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController

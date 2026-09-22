@@ -16,8 +16,8 @@ public class ProdutoMapper {
         }
         return new ProdutoResponseDTO(
                 produto.getId(),
-                produto.getFornecedor().getId(),
-                produto.getCategoria().getId(),
+                produto.getFornecedor().getNome(),
+                produto.getCategoria().getCategoria(),
                 produto.getNome(),
                 produto.getSku(),
                 produto.getCodigoBarras(),
