@@ -11,6 +11,8 @@ import sptech.classicamoveis.Colaborador.dto.ColaboradorRequestDto;
 import sptech.classicamoveis.Colaborador.dto.ColaboradorResponseDto;
 import sptech.classicamoveis.Colaborador.model.Colaborador;
 import sptech.classicamoveis.Colaborador.repository.ColaboradorRepository;
+import sptech.classicamoveis.Estabelecimento.Estabelecimento;
+import sptech.classicamoveis.Estabelecimento.repository.EstabelecimentoRepository;
 import sptech.classicamoveis.Usuario.model.Usuario;
 import sptech.classicamoveis.Usuario.repository.UsuarioRepository;
 
@@ -28,6 +30,7 @@ public class ColaboradorService {
     private final ColaboradorRepository colaboradorRepository;
     private final CargoRepository cargoRepository;
     private final UsuarioRepository usuarioRepository;
+    private final EstabelecimentoRepository estabelecimentoRepository;
 
     public List<ColaboradorResponseDto> listarTodos() {
         return colaboradorRepository.findAll().stream()
@@ -135,6 +138,16 @@ public class ColaboradorService {
         colaborador.setSalario(dto.salario());
         colaborador.setCarteiraTrabalho(dto.carteiraTrabalho());
         colaborador.setComissao(dto.comissao());
+        colaborador.setCpf(dto.cpf());
+
+        if (dto.estabelecimentoId() != null) {
+            Estabelecimento estabelecimento = estabelecimentoRepository.findById(dto.estabelecimentoId())
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            "Estabelecimento não encontrado com id: " + dto.estabelecimentoId()));
+            colaborador.setEstabelecimento(estabelecimento);
+        } else {
+            colaborador.setEstabelecimento(null);
+        }
     }
 
     private Colaborador buscarEntidadePorId(Integer id) {
@@ -183,7 +196,7 @@ public class ColaboradorService {
                 c.getSalario(),
                 c.getCarteiraTrabalho(),
                 c.getComissao(),
-                c.getEstabelecimento().getId(),
+                c.getEstabelecimento() != null ? c.getEstabelecimento().getId() : null,
                 c.getCpf()
         );
     }

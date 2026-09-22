@@ -43,6 +43,15 @@ public class ProdutoController {
         return ResponseEntity.ok(produtoService.listarProdutosAbaixoDoEstoqueMinimo());
     }
 
+    @Operation(
+            summary = "Lista produtos de um fornecedor",
+            description = "Retorna todos os produtos cadastrados vinculados ao fornecedor informado."
+    )
+    @GetMapping("/fornecedor/{fornecedorId}")
+    public ResponseEntity<List<ProdutoResponseDTO>> buscarPorFornecedor(@PathVariable Long fornecedorId) {
+        return ResponseEntity.ok(produtoService.buscarPorFornecedor(fornecedorId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ProdutoResponseDTO> buscarPorId(@PathVariable Integer id) {
         return ResponseEntity.ok(produtoService.buscarPorId(id));

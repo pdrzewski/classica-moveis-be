@@ -4,9 +4,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
-@Schema(description = "Resposta do login com o usuário autenticado e suas permissões")
+@Schema(description = "Resposta do login com o usuário autenticado (incluindo o id) e suas permissões")
 public class LoginResponseDto {
 
+    @Schema(example = "5")
+    private Integer usuarioId;
     @Schema(example = "joao.lima")
     private String login;
     @Schema(example = "[\"CRIAR_VENDA\", \"CONSULTAR_ESTOQUE\"]")
@@ -15,9 +17,18 @@ public class LoginResponseDto {
     public LoginResponseDto() {
     }
 
-    public LoginResponseDto(String login, List<String> permissoes) {
+    public LoginResponseDto(Integer usuarioId, String login, List<String> permissoes) {
+        this.usuarioId = usuarioId;
         this.login = login;
         this.permissoes = permissoes;
+    }
+
+    public Integer getUsuarioId() {
+        return usuarioId;
+    }
+
+    public void setUsuarioId(Integer usuarioId) {
+        this.usuarioId = usuarioId;
     }
 
     public String getLogin() {
