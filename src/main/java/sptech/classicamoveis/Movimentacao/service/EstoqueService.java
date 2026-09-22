@@ -17,6 +17,7 @@ import sptech.classicamoveis.Movimentacao.StatusMovimentacao.StatusMovimentacao;
 import sptech.classicamoveis.Movimentacao.MovimentacaoRepository;
 
 import sptech.classicamoveis.Movimentacao.dto.InventarioProdutoDto;
+import sptech.classicamoveis.Movimentacao.dto.EstoqueProdutoDto;
 
 import sptech.classicamoveis.Produto.mapper.ProdutoMapper;
 import sptech.classicamoveis.Produto.model.Produto;
@@ -177,6 +178,42 @@ public class EstoqueService {
      */
     public Long calcularSaldoProduto(Integer estabelecimentoId, Integer produtoId) {
         return Math.round(calcularSaldoDisponivel(produtoId, estabelecimentoId));
+    }
+
+    public List<EstoqueProdutoDto> buscarEstoquePorEstabelecimento(
+            Integer estabelecimentoId) {
+
+        if (!estabelecimentoRepository.existsById(estabelecimentoId)) {
+            throw new EntityNotFoundException(
+                    "Estabelecimento não encontrado"
+            );
+        }
+
+        List<EstoqueProdutoDto> estoque =
+                new java.util.ArrayList<>();
+
+        List<Produto> produtos =
+                produtoRepository.findAll();
+
+        for (Produto produto : produtos) {
+
+            Long saldo =
+                    calcularSaldoProduto(
+                            estabelecimentoId,
+                            produto.getId()
+                    );
+
+            EstoqueProdutoDto dto =
+                    new EstoqueProdutoDto(
+                            produtoMapper.toResponseDTO(produto),
+                            estabelecimentoId,
+                            saldo
+                    );
+
+            estoque.add(dto);
+        }
+
+        return estoque;
     }
 
     /**

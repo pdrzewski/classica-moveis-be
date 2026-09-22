@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sptech.classicamoveis.Movimentacao.dto.EstoqueProdutoDto;
 import sptech.classicamoveis.Movimentacao.dto.InventarioContagemRequestDto;
 import sptech.classicamoveis.Movimentacao.dto.InventarioProdutoDto;
 import sptech.classicamoveis.Movimentacao.service.EstoqueService;
@@ -61,6 +62,17 @@ public class EstoqueController {
         response.put("inventario", inventario);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{estabelecimentoId}/detalhado")
+    public ResponseEntity<List<EstoqueProdutoDto>> buscarEstoqueDetalhado(
+            @PathVariable Integer estabelecimentoId) {
+
+        return ResponseEntity.ok(
+                estoqueService.buscarEstoquePorEstabelecimento(
+                        estabelecimentoId
+                )
+        );
     }
 
     /*
