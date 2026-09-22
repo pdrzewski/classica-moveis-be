@@ -24,4 +24,6 @@ public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
 	List<Produto> findByIdEqualsOrEstoqueMinimoEquals(Integer id, Integer estoqueMinimo);
 
 	List<Produto> findByFornecedor_Id(Long fornecedorId);
+
+    List<Produto> findByAtivoTrue();
 }

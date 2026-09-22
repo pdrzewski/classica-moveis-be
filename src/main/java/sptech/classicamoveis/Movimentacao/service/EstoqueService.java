@@ -1,23 +1,29 @@
 package sptech.classicamoveis.Movimentacao.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import sptech.classicamoveis.Colaborador.model.Colaborador;
 import sptech.classicamoveis.Colaborador.repository.ColaboradorRepository;
 import sptech.classicamoveis.Estabelecimento.repository.EstabelecimentoRepository;
+
 import sptech.classicamoveis.Movimentacao.Movimentacao;
 import sptech.classicamoveis.Movimentacao.ItemMovimentacao.ItemMovimentacao;
 import sptech.classicamoveis.Movimentacao.ItemMovimentacao.ItemMovimentacaoRepository;
 import sptech.classicamoveis.Movimentacao.TipoMovimentacao.TipoMovimentacao;
 import sptech.classicamoveis.Movimentacao.StatusMovimentacao.StatusMovimentacao;
 import sptech.classicamoveis.Movimentacao.MovimentacaoRepository;
-import sptech.classicamoveis.Movimentacao.dto.EstoqueProdutoDto;
+
 import sptech.classicamoveis.Movimentacao.dto.InventarioProdutoDto;
+
 import sptech.classicamoveis.Produto.mapper.ProdutoMapper;
 import sptech.classicamoveis.Produto.model.Produto;
 import sptech.classicamoveis.Produto.repository.ProdutoRepository;
 
 import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -171,6 +177,200 @@ public class EstoqueService {
      */
     public Long calcularSaldoProduto(Integer estabelecimentoId, Integer produtoId) {
         return Math.round(calcularSaldoDisponivel(produtoId, estabelecimentoId));
+    }
+
+    /**
+     * Busca todos os produtos ativos para montar a tela de inventário.
+     */
+    public List<InventarioProdutoDto> buscarInventario(
+            Integer estabelecimentoId) {
+
+        if (!estabelecimentoRepository.existsById(estabelecimentoId)) {
+            throw new EntityNotFoundException(
+                    "Estabelecimento não encontrado"
+            );
+        }
+
+        List<InventarioProdutoDto> inventario =
+                new java.util.ArrayList<>();
+
+        List<Produto> produtos =
+                produtoRepository.findByAtivoTrue();
+
+        for (Produto produto : produtos) {
+
+            Long quantidadeAtual =
+                    calcularSaldoProduto(
+                            estabelecimentoId,
+                            produto.getId()
+                    );
+
+            InventarioProdutoDto dto =
+                    new InventarioProdutoDto(
+                            produto.getId(),
+                            produto.getNome(),
+                            produto.getMarca(),
+                            produto.getFornecedor().getNome(),
+                            produto.getCategoria().getCategoria(),
+                            quantidadeAtual,
+                            null
+                    );
+
+            inventario.add(dto);
+        }
+
+        return inventario;
+    }
+
+    /**
+     * Registra a quantidade encontrada no inventário físico.
+     *
+     * Se a quantidade física for diferente do estoque atual,
+     * cria automaticamente um ajuste de entrada ou saída.
+     */
+    @Transactional
+    public InventarioProdutoDto registrarContagem(
+            Integer estabelecimentoId,
+            Integer produtoId,
+            Integer quantidadeContada,
+            Integer colaboradorId) {
+
+        if (quantidadeContada == null || quantidadeContada < 0) {
+
+            throw new IllegalArgumentException(
+                    "A quantidade contada deve ser maior ou igual a zero"
+            );
+        }
+
+        if (!estabelecimentoRepository.existsById(estabelecimentoId)) {
+
+            throw new EntityNotFoundException(
+                    "Estabelecimento não encontrado"
+            );
+        }
+
+        Produto produto = produtoRepository.findById(produtoId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "Produto não encontrado"
+                        )
+                );
+
+        if (!produto.getAtivo()) {
+
+            throw new IllegalArgumentException(
+                    "Não é possível realizar inventário de um produto inativo"
+            );
+        }
+
+        Colaborador colaborador =
+                colaboradorRepository.findById(colaboradorId)
+                        .orElseThrow(() ->
+                                new EntityNotFoundException(
+                                        "Colaborador não encontrado"
+                                )
+                        );
+
+        Long quantidadeAtual =
+                calcularSaldoProduto(
+                        estabelecimentoId,
+                        produtoId
+                );
+
+        int diferenca =
+                quantidadeContada - quantidadeAtual.intValue();
+
+        if (diferenca != 0) {
+
+            Movimentacao movimentacao =
+                    new Movimentacao();
+
+            movimentacao.setDataHora(
+                    java.time.LocalDateTime.now()
+            );
+
+            movimentacao.setStatus(
+                    StatusMovimentacao.CONCLUIDO
+            );
+
+            movimentacao.setColaborador(
+                    colaborador
+            );
+
+            movimentacao.setEstabelecimentoOrigem(
+                    estabelecimentoRepository.findById(
+                            estabelecimentoId
+                    ).orElseThrow(() ->
+                            new EntityNotFoundException(
+                                    "Estabelecimento não encontrado"
+                            )
+                    )
+            );
+
+            movimentacao.setValorTotal(0.0);
+
+            movimentacao.setObservacao(
+                    "Ajuste realizado pelo inventário físico. " +
+                            "Estoque anterior: " + quantidadeAtual +
+                            ". Quantidade contada: " + quantidadeContada +
+                            ". Diferença: " + diferenca
+            );
+
+            if (diferenca > 0) {
+
+                movimentacao.setTipoMovimentacao(
+                        TipoMovimentacao.AJUSTE_ENTRADA
+                );
+
+            } else {
+
+                movimentacao.setTipoMovimentacao(
+                        TipoMovimentacao.AJUSTE_SAIDA
+                );
+            }
+
+            Movimentacao movimentacaoSalva =
+                    movimentacaoRepository.save(
+                            movimentacao
+                    );
+
+            ItemMovimentacao item =
+                    new ItemMovimentacao();
+
+            item.setMovimentacao(
+                    movimentacaoSalva
+            );
+
+            item.setProduto(
+                    produto
+            );
+
+            item.setQtd(
+                    Math.abs(diferenca)
+            );
+
+            item.setPrecoUnitario(0.0);
+
+            item.setDesconto(0.0);
+
+            itemRepository.save(item);
+        }
+
+        Long novoSaldo =
+                calcularSaldoProduto(
+                        estabelecimentoId,
+                        produtoId
+                );
+
+        return new InventarioProdutoDto(
+                produto.getId(),
+                produto.getNome(),
+                produto.getMarca(),
+                produto.getFornecedor().getNome(),
+                produto.getCategoria().getCategoria(),
+                novoSaldo,
+                quantidadeContada
+        );
     }
 
     /**
