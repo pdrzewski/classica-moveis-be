@@ -10,7 +10,12 @@ import sptech.classicamoveis.Usuario.model.Usuario;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "colaborador")
+@Table(
+        name = "colaborador",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_colaborador_usuario", columnNames = "usuario_id")
+        }
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

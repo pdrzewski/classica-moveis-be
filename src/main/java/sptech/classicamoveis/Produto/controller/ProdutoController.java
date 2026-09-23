@@ -1,8 +1,8 @@
 package sptech.classicamoveis.Produto.controller;
 
+import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +32,11 @@ public class ProdutoController {
         return ResponseEntity.ok(produtoService.buscarPorTermo(q));
     }
 
+    @GetMapping("/fornecedor/{fornecedorId}")
+    public ResponseEntity<List<ProdutoResponseDTO>> listarPorFornecedor(@PathVariable Long fornecedorId) {
+        return ResponseEntity.ok(produtoService.buscarPorFornecedor(fornecedorId));
+    }
+
     @Operation(
             summary = "Lista produtos abaixo do estoque mínimo",
             description = "Para cada produto, soma o estoque atual (calculado pelo EstoqueService, mesmo cálculo " +
@@ -47,10 +52,6 @@ public class ProdutoController {
             summary = "Lista produtos de um fornecedor",
             description = "Retorna todos os produtos cadastrados vinculados ao fornecedor informado."
     )
-    @GetMapping("/fornecedor/{fornecedorId}")
-    public ResponseEntity<List<ProdutoResponseDTO>> buscarPorFornecedor(@PathVariable Long fornecedorId) {
-        return ResponseEntity.ok(produtoService.buscarPorFornecedor(fornecedorId));
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProdutoResponseDTO> buscarPorId(@PathVariable Integer id) {
