@@ -40,6 +40,8 @@ public class ColaboradorResponseDto {
         this.salario = salario;
         this.carteiraTrabalho = carteiraTrabalho;
         this.comissao = comissao;
+        this.estabelecimentoId = estabelecimentoId;
+        this.cpf = cpf;
     }
 
     public Integer getId() { return id; }

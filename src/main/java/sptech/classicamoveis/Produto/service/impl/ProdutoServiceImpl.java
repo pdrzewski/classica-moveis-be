@@ -73,6 +73,14 @@ public class ProdutoServiceImpl implements ProdutoService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<ProdutoResponseDTO> listarPorFornecedor(Long fornecedorId) {
+        return produtoRepository.findByFornecedorId(fornecedorId).stream()
+                .map(produtoMapper::toResponseDTO)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public ProdutoResponseDTO buscarPorId(Integer id) {
         return produtoMapper.toResponseDTO(buscarEntidadePorId(id));
     }

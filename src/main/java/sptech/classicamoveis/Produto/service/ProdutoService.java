@@ -12,6 +12,8 @@ public interface ProdutoService {
 
     List<ProdutoResponseDTO> buscarPorTermo(String termo);
 
+    List<ProdutoResponseDTO> listarPorFornecedor(Long fornecedorId);
+
     ProdutoResponseDTO buscarPorId(Integer id);
 
     ProdutoResponseDTO criar(ProdutoRequestDTO dto);

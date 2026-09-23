@@ -2,9 +2,11 @@ package sptech.classicamoveis.Movimentacao.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sptech.classicamoveis.Movimentacao.dto.ProdutoEstoqueResponseDto;
 import sptech.classicamoveis.Movimentacao.service.EstoqueService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -37,6 +39,12 @@ public class EstoqueController {
         response.put("estabelecimentoId", estabelecimentoId);
         response.put("inventario", inventario);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping({"/{estabelecimentoId}/produtos", "/produtos"})
+    public ResponseEntity<List<ProdutoEstoqueResponseDto>> listarProdutosComSaldo(
+            @PathVariable(required = false) Integer estabelecimentoId) {
+        return ResponseEntity.ok(estoqueService.listarProdutosComSaldo(estabelecimentoId));
     }
 
     @GetMapping("/{estabelecimentoId}/extrato/{produtoId}")

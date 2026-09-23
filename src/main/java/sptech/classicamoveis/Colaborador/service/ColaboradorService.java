@@ -3,7 +3,7 @@ package sptech.classicamoveis.Colaborador.service;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import sptech.classicamoveis.Cargo.model.Cargo; // Certifique-se de que os caminhos dos pacotes estão certos
+import sptech.classicamoveis.Cargo.model.Cargo;
 import sptech.classicamoveis.Cargo.repository.CargoRepository;
 import sptech.classicamoveis.Colaborador.AniversarioColaboradorDto;
 import sptech.classicamoveis.Colaborador.FeriasRequestDto;
@@ -11,6 +11,8 @@ import sptech.classicamoveis.Colaborador.dto.ColaboradorRequestDto;
 import sptech.classicamoveis.Colaborador.dto.ColaboradorResponseDto;
 import sptech.classicamoveis.Colaborador.model.Colaborador;
 import sptech.classicamoveis.Colaborador.repository.ColaboradorRepository;
+import sptech.classicamoveis.Estabelecimento.Estabelecimento;
+import sptech.classicamoveis.Estabelecimento.repository.EstabelecimentoRepository;
 import sptech.classicamoveis.Usuario.model.Usuario;
 import sptech.classicamoveis.Usuario.repository.UsuarioRepository;
 
@@ -28,6 +30,7 @@ public class ColaboradorService {
     private final ColaboradorRepository colaboradorRepository;
     private final CargoRepository cargoRepository;
     private final UsuarioRepository usuarioRepository;
+    private final EstabelecimentoRepository estabelecimentoRepository;
 
     public List<ColaboradorResponseDto> listarTodos() {
         return colaboradorRepository.findAll().stream()
@@ -40,6 +43,8 @@ public class ColaboradorService {
     }
 
     public ColaboradorResponseDto criar(ColaboradorRequestDto dto) {
+        validarDuplicidade(dto);
+
         Colaborador colaborador = new Colaborador();
         preencherEntidade(colaborador, dto);
         return toResponseDTO(colaboradorRepository.save(colaborador));
@@ -47,6 +52,7 @@ public class ColaboradorService {
 
     public ColaboradorResponseDto atualizar(Integer id, ColaboradorRequestDto dto) {
         Colaborador colaborador = buscarEntidadePorId(id);
+        validarDuplicidade(dto, id);
         preencherEntidade(colaborador, dto);
         return toResponseDTO(colaboradorRepository.save(colaborador));
     }
@@ -125,16 +131,44 @@ public class ColaboradorService {
                 .orElseThrow(() -> new EntityNotFoundException("Cargo não encontrado com id: " + dto.cargoId()));
         Usuario usuario = usuarioRepository.findById(dto.usuarioId())
                 .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com id: " + dto.usuarioId()));
+        Estabelecimento estabelecimento = dto.estabelecimentoId() == null ? null :
+                estabelecimentoRepository.findById(dto.estabelecimentoId())
+                        .orElseThrow(() -> new EntityNotFoundException("Estabelecimento não encontrado com id: " + dto.estabelecimentoId()));
 
         colaborador.setNome(dto.nome());
         colaborador.setCargo(cargo);
         colaborador.setUsuario(usuario);
+        colaborador.setEstabelecimento(estabelecimento);
         colaborador.setEmFerias(dto.emFerias() != null ? dto.emFerias() : false);
         colaborador.setDataAdmissao(dto.dataAdmissao());
         colaborador.setDataNascimento(dto.dataNascimento());
         colaborador.setSalario(dto.salario());
         colaborador.setCarteiraTrabalho(dto.carteiraTrabalho());
         colaborador.setComissao(dto.comissao());
+        colaborador.setCpf(dto.cpf());
+    }
+
+    private void validarDuplicidade(ColaboradorRequestDto dto) {
+        validarDuplicidade(dto, null);
+    }
+
+    private void validarDuplicidade(ColaboradorRequestDto dto, Integer colaboradorIdIgnorado) {
+        if (dto.usuarioId() != null && colaboradorRepository.existsByUsuario_Id(dto.usuarioId())) {
+            Colaborador colaboradorExistente = colaboradorRepository.findByUsuario_Id(dto.usuarioId()).orElse(null);
+            if (colaboradorExistente != null && !colaboradorExistente.getId().equals(colaboradorIdIgnorado)) {
+                throw new IllegalArgumentException("Já existe um colaborador cadastrado para este usuário.");
+            }
+        }
+
+        if (dto.cpf() != null && !dto.cpf().isBlank() && colaboradorRepository.existsByCpf(dto.cpf())) {
+            Colaborador colaboradorExistente = colaboradorRepository.findAll().stream()
+                    .filter(c -> dto.cpf().equals(c.getCpf()))
+                    .findFirst()
+                    .orElse(null);
+            if (colaboradorExistente != null && !colaboradorExistente.getId().equals(colaboradorIdIgnorado)) {
+                throw new IllegalArgumentException("Já existe um colaborador cadastrado com este CPF.");
+            }
+        }
     }
 
     private Colaborador buscarEntidadePorId(Integer id) {
@@ -169,6 +203,8 @@ public class ColaboradorService {
     }
 
     private ColaboradorResponseDto toResponseDTO(Colaborador c) {
+        Integer estabelecimentoId = c.getEstabelecimento() == null ? null : c.getEstabelecimento().getId();
+
         return new ColaboradorResponseDto(
                 c.getId(),
                 c.getNome(),
@@ -183,7 +219,7 @@ public class ColaboradorService {
                 c.getSalario(),
                 c.getCarteiraTrabalho(),
                 c.getComissao(),
-                c.getEstabelecimento().getId(),
+                estabelecimentoId,
                 c.getCpf()
         );
     }

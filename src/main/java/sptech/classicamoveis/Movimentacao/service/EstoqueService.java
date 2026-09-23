@@ -9,8 +9,11 @@ import sptech.classicamoveis.Movimentacao.ItemMovimentacao.ItemMovimentacaoRepos
 import sptech.classicamoveis.Movimentacao.TipoMovimentacao.TipoMovimentacao;
 import sptech.classicamoveis.Movimentacao.StatusMovimentacao.StatusMovimentacao;
 import sptech.classicamoveis.Movimentacao.MovimentacaoRepository;
+import sptech.classicamoveis.Movimentacao.dto.ProdutoEstoqueResponseDto;
 import sptech.classicamoveis.Produto.model.Produto;
+import sptech.classicamoveis.Produto.repository.ProdutoRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,6 +23,7 @@ public class EstoqueService {
 
     private final MovimentacaoRepository movimentacaoRepository;
     private final ItemMovimentacaoRepository itemRepository;
+    private final ProdutoRepository produtoRepository;
 
 
     /**
@@ -182,6 +186,65 @@ public class EstoqueService {
             }
         }
         return inventario;
+    }
+
+    public List<ProdutoEstoqueResponseDto> listarProdutosComSaldo(Integer estabelecimentoId) {
+        List<Produto> produtos = produtoRepository.findAll();
+        List<ProdutoEstoqueResponseDto> resposta = new ArrayList<>();
+
+        for (Produto produto : produtos) {
+            if (produto.getAtivo() != null && !produto.getAtivo()) {
+                continue;
+            }
+
+            Long saldoDisponivel = estabelecimentoId == null
+                    ? calcularSaldoGeralProduto(produto.getId())
+                    : calcularSaldoProduto(estabelecimentoId, produto.getId());
+
+            ProdutoEstoqueResponseDto dto = new ProdutoEstoqueResponseDto(
+                    produto.getId(),
+                    produto.getNome(),
+                    produto.getSku(),
+                    saldoDisponivel,
+                    produto.getEstoqueMinimo()
+            );
+            resposta.add(dto);
+        }
+
+        return resposta;
+    }
+
+    public Long calcularSaldoGeralProduto(Integer produtoId) {
+        double entradas = 0;
+        double saidas = 0;
+
+        List<Movimentacao> movimentacoes = movimentacaoRepository.findAll();
+        for (Movimentacao movimentacao : movimentacoes) {
+            if (!StatusMovimentacao.CONCLUIDO.equals(movimentacao.getStatus())) {
+                continue;
+            }
+
+            List<ItemMovimentacao> itens = itemRepository.findByMovimentacaoId(movimentacao.getId());
+            for (ItemMovimentacao item : itens) {
+                if (!item.getProduto().getId().equals(produtoId)) {
+                    continue;
+                }
+
+                if (movimentacao.getTipoMovimentacao() == TipoMovimentacao.COMPRA
+                        || movimentacao.getTipoMovimentacao() == TipoMovimentacao.TRANSFERENCIA && movimentacao.getEstabelecimentoDestino() != null
+                        || movimentacao.getTipoMovimentacao() == TipoMovimentacao.AJUSTE_ENTRADA) {
+                    entradas += item.getQtd();
+                }
+
+                if (movimentacao.getTipoMovimentacao() == TipoMovimentacao.VENDA
+                        || movimentacao.getTipoMovimentacao() == TipoMovimentacao.TRANSFERENCIA && movimentacao.getEstabelecimentoOrigem() != null
+                        || movimentacao.getTipoMovimentacao() == TipoMovimentacao.AJUSTE_SAIDA) {
+                    saidas += item.getQtd();
+                }
+            }
+        }
+
+        return Math.round(entradas - saidas);
     }
 
     /**

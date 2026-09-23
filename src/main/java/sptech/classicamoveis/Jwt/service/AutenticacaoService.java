@@ -31,7 +31,7 @@ public class AutenticacaoService implements UserDetailsService {
         Usuario usuario = usuarioRepository.findByLogin(login)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário ou Senha inválidos"));
 
-        Colaborador colaborador = colaboradorRepository.findByUsuario_Login(login).orElse(null);
+        Colaborador colaborador = colaboradorRepository.findByUsuario_Id(usuario.getId()).orElse(null);
         boolean deFerias = colaboradorService.estaDeFerias(colaborador);
 
         return new UsuarioAutenticado(usuario, colaborador, deFerias);
