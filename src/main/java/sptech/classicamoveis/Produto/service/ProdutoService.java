@@ -1,5 +1,6 @@
 package sptech.classicamoveis.Produto.service;
 
+import org.springframework.transaction.annotation.Transactional;
 import sptech.classicamoveis.Movimentacao.Movimentacao;
 import sptech.classicamoveis.Produto.dto.ProdutoEstoqueBaixoDTO;
 import sptech.classicamoveis.Produto.dto.ProdutoRequestDTO;
@@ -13,6 +14,7 @@ public interface ProdutoService {
 
     List<ProdutoResponseDTO> buscarPorTermo(String termo);
 
+    @Transactional(readOnly = true)
     List<ProdutoResponseDTO> buscarPorFornecedor(Long fornecedorId);
 
     ProdutoResponseDTO buscarPorId(Integer id);

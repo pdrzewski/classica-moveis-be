@@ -1,6 +1,5 @@
 package sptech.classicamoveis.Jwt.controller;
 
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -12,18 +11,20 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import sptech.classicamoveis.Jwt.service.GerenciadorTokenJwt;
 import sptech.classicamoveis.Jwt.dto.LoginDto;
 import sptech.classicamoveis.Jwt.dto.LoginResponseDto;
+import sptech.classicamoveis.Jwt.mapper.LoginMapper;
 import sptech.classicamoveis.Jwt.model.UsuarioAutenticado;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/login")
-@Tag(name = "Autenticação", description = "Login, logout e emissão de token JWT")
 public class LoginController {
 
     public static final String COOKIE_NOME = "moveis_jwt_token";
@@ -33,10 +34,12 @@ public class LoginController {
 
     private final AuthenticationManager authenticationManager;
     private final GerenciadorTokenJwt jwtTokenManager;
+    private final LoginMapper loginMapper;
 
-    public LoginController(AuthenticationManager authenticationManager, GerenciadorTokenJwt jwtTokenManager) {
+    public LoginController(AuthenticationManager authenticationManager, GerenciadorTokenJwt jwtTokenManager, LoginMapper loginMapper) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenManager = jwtTokenManager;
+        this.loginMapper = loginMapper;
     }
 
     @PostMapping
@@ -62,10 +65,12 @@ public class LoginController {
                 .map(Object::toString)
                 .toList();
 
-        return ResponseEntity.ok(new LoginResponseDto(
-                usuarioAutenticado.getUsuario().getId(),
-                usuarioAutenticado.getUsername(),
-                permissoes));
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            permissoes.add(authority.getAuthority());
+        }
+
+        LoginResponseDto responseDto = loginMapper.toResponseDTO(usuarioAutenticado, permissoes);
+        return ResponseEntity.ok(responseDto);
     }
 
     @PostMapping("/sair")

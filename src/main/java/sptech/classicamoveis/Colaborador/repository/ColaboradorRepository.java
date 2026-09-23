@@ -7,5 +7,7 @@ import java.util.Optional;
 
 public interface ColaboradorRepository extends JpaRepository<Colaborador, Integer> {
 
-    Optional<Colaborador> findByUsuario_Login(String login);
+    Optional<Colaborador> findByUsuario_Id(Integer usuarioId);
+    boolean existsByUsuario_Id(Integer usuarioId);
+    boolean existsByCpf(String cpf);
 }

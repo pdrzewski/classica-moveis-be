@@ -41,6 +41,7 @@ public class SecurityConfiguracao {
 
     private static final String[] URLS_PERMITIDAS = {
             "/login/**",
+            "/api/usuarios/**",
             "/error/**",
             "/swagger-ui/**",
             "/v3/api-docs/**"

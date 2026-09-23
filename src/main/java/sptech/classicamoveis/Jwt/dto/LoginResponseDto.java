@@ -1,26 +1,28 @@
 package sptech.classicamoveis.Jwt.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import sptech.classicamoveis.Colaborador.dto.ColaboradorResponseDto;
 
 import java.util.List;
 
-@Schema(description = "Resposta do login com o usuário autenticado (incluindo o id) e suas permissões")
 public class LoginResponseDto {
 
-    @Schema(example = "5")
-    private Integer usuarioId;
-    @Schema(example = "joao.lima")
     private String login;
-    @Schema(example = "[\"CRIAR_VENDA\", \"CONSULTAR_ESTOQUE\"]")
     private List<String> permissoes;
+    private Integer usuarioId;
+    private ColaboradorResponseDto colaborador;
 
     public LoginResponseDto() {
     }
 
-    public LoginResponseDto(Integer usuarioId, String login, List<String> permissoes) {
-        this.usuarioId = usuarioId;
+    public LoginResponseDto(String login, List<String> permissoes, Integer usuarioId, ColaboradorResponseDto colaborador) {
         this.login = login;
         this.permissoes = permissoes;
+        this.usuarioId = usuarioId;
+        this.colaborador = colaborador;
+    }
+
+    public String getLogin() {
+        return login;
     }
 
     public Integer getUsuarioId() {
@@ -29,10 +31,6 @@ public class LoginResponseDto {
 
     public void setUsuarioId(Integer usuarioId) {
         this.usuarioId = usuarioId;
-    }
-
-    public String getLogin() {
-        return login;
     }
 
     public void setLogin(String login) {
@@ -45,5 +43,13 @@ public class LoginResponseDto {
 
     public void setPermissoes(List<String> permissoes) {
         this.permissoes = permissoes;
+    }
+
+    public ColaboradorResponseDto getColaborador() {
+        return colaborador;
+    }
+
+    public void setColaborador(ColaboradorResponseDto colaborador) {
+        this.colaborador = colaborador;
     }
 }

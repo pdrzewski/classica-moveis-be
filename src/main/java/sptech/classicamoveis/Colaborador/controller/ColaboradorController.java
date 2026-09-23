@@ -2,6 +2,7 @@ package sptech.classicamoveis.Colaborador.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,7 +13,9 @@ import sptech.classicamoveis.Colaborador.dto.ColaboradorRequestDto;
 import sptech.classicamoveis.Colaborador.dto.ColaboradorResponseDto;
 import sptech.classicamoveis.Colaborador.service.ColaboradorService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/colaboradores")
@@ -63,5 +66,19 @@ public class ColaboradorController {
     public ResponseEntity<List<AniversarioColaboradorDto>> aniversariosProximos(
             @RequestParam(defaultValue = "30") int dias) {
         return ResponseEntity.ok(colaboradorService.buscarAniversariosProximos(dias));
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        Map<String, String> body = new HashMap<>();
+        body.put("mensagem", ex.getMessage());
+        return ResponseEntity.badRequest().body(body);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, String>> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        Map<String, String> body = new HashMap<>();
+        body.put("mensagem", "Já existe um registro duplicado para este usuário ou CPF.");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
     }
 }
