@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import sptech.classicamoveis.Colaborador.service.ColaboradorService;
 import sptech.classicamoveis.Jwt.service.GerenciadorTokenJwt;
 import sptech.classicamoveis.Jwt.dto.LoginDto;
 import sptech.classicamoveis.Jwt.dto.LoginResponseDto;
@@ -35,11 +36,13 @@ public class LoginController {
     private final AuthenticationManager authenticationManager;
     private final GerenciadorTokenJwt jwtTokenManager;
     private final LoginMapper loginMapper;
+    private final ColaboradorService colaboradorService;
 
-    public LoginController(AuthenticationManager authenticationManager, GerenciadorTokenJwt jwtTokenManager, LoginMapper loginMapper) {
+    public LoginController(AuthenticationManager authenticationManager, GerenciadorTokenJwt jwtTokenManager, LoginMapper loginMapper, ColaboradorService colaboradorService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenManager = jwtTokenManager;
         this.loginMapper = loginMapper;
+        this.colaboradorService = colaboradorService;
     }
 
     @PostMapping
@@ -48,28 +51,53 @@ public class LoginController {
 
         try {
             authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(dto.getLogin(), dto.getSenha()));
+                    new UsernamePasswordAuthenticationToken(
+                            dto.getLogin(),
+                            dto.getSenha()
+                    )
+            );
         } catch (LockedException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body(e.getMessage());
+
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(e.getMessage());
         }
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String token = jwtTokenManager.generateToken(authentication);
-        response.addHeader(HttpHeaders.SET_COOKIE, montarCookie(token, jwtTokenManager.getJwtTokenValidity()).toString());
 
-        UsuarioAutenticado usuarioAutenticado = (UsuarioAutenticado) authentication.getPrincipal();
-        List<String> permissoes = authentication.getAuthorities().stream()
-                .map(Object::toString)
+        response.addHeader(
+                HttpHeaders.SET_COOKIE,
+                montarCookie(
+                        token,
+                        jwtTokenManager.getJwtTokenValidity()
+                ).toString()
+        );
+
+        UsuarioAutenticado usuarioAutenticado =
+                (UsuarioAutenticado) authentication.getPrincipal();
+
+        colaboradorService.verificarFeriasExpiradas(
+                usuarioAutenticado.getColaborador()
+        );
+
+        List<String> permissoes = authentication
+                .getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
                 .toList();
 
-        for (GrantedAuthority authority : authentication.getAuthorities()) {
-            permissoes.add(authority.getAuthority());
-        }
+        LoginResponseDto responseDto =
+                loginMapper.toResponseDTO(
+                        usuarioAutenticado,
+                        permissoes
+                );
 
-        LoginResponseDto responseDto = loginMapper.toResponseDTO(usuarioAutenticado, permissoes);
         return ResponseEntity.ok(responseDto);
     }
 

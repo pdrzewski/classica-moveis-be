@@ -81,4 +81,11 @@ public class ColaboradorController {
         body.put("mensagem", "Já existe um registro duplicado para este usuário ou CPF.");
         return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
     }
+
+    @GetMapping("/ferias")
+    public ResponseEntity<List<ColaboradorResponseDto>> listarEmFerias() {
+        return ResponseEntity.ok(
+                colaboradorService.listarEmFerias()
+        );
+    }
 }

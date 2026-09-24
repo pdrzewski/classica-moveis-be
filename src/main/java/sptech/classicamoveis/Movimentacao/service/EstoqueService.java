@@ -8,6 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 import sptech.classicamoveis.Colaborador.model.Colaborador;
 import sptech.classicamoveis.Colaborador.repository.ColaboradorRepository;
 import sptech.classicamoveis.Estabelecimento.repository.EstabelecimentoRepository;
+import sptech.classicamoveis.Movimentacao.dto.InventarioContagemItemDto;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import sptech.classicamoveis.Movimentacao.Movimentacao;
 import sptech.classicamoveis.Movimentacao.ItemMovimentacao.ItemMovimentacao;
@@ -126,14 +130,45 @@ public class EstoqueService {
         double ajustesSaida = 0;
 
         // VENDA com status CONCLUIDO: estabelecimento é origem
-        List<Movimentacao> vendasList = movimentacaoRepository.findByTipoMovimentacaoAndStatusAndEstabelecimentoOrigemId(
-                TipoMovimentacao.VENDA,
-                StatusMovimentacao.CONCLUIDO,
-                estabelecimentoId
-        );
-        for (Movimentacao m : vendasList) {
-            List<ItemMovimentacao> itens = itemRepository.findByMovimentacaoId(m.getId());
+        // VENDA PENDENTE: já reserva o estoque
+        List<Movimentacao> vendasPendentes =
+                movimentacaoRepository
+                        .findByTipoMovimentacaoAndStatusAndEstabelecimentoOrigemId(
+                                TipoMovimentacao.VENDA,
+                                StatusMovimentacao.PENDENTE,
+                                estabelecimentoId
+                        );
+
+        for (Movimentacao m : vendasPendentes) {
+
+            List<ItemMovimentacao> itens =
+                    itemRepository.findByMovimentacaoId(m.getId());
+
             for (ItemMovimentacao item : itens) {
+
+                if (item.getProduto().getId().equals(produtoId)) {
+                    vendas += item.getQtd();
+                }
+            }
+        }
+
+
+// VENDA CONCLUIDA: também já saiu do estoque
+        List<Movimentacao> vendasConcluidas =
+                movimentacaoRepository
+                        .findByTipoMovimentacaoAndStatusAndEstabelecimentoOrigemId(
+                                TipoMovimentacao.VENDA,
+                                StatusMovimentacao.CONCLUIDO,
+                                estabelecimentoId
+                        );
+
+        for (Movimentacao m : vendasConcluidas) {
+
+            List<ItemMovimentacao> itens =
+                    itemRepository.findByMovimentacaoId(m.getId());
+
+            for (ItemMovimentacao item : itens) {
+
                 if (item.getProduto().getId().equals(produtoId)) {
                     vendas += item.getQtd();
                 }
@@ -180,6 +215,37 @@ public class EstoqueService {
         return Math.round(calcularSaldoDisponivel(produtoId, estabelecimentoId));
     }
 
+    @Transactional
+    public List<InventarioProdutoDto> registrarContagemLote(
+            Integer estabelecimentoId,
+            Integer colaboradorId,
+            List<InventarioContagemItemDto> itens) {
+
+        if (!estabelecimentoRepository.existsById(estabelecimentoId)) {
+
+            throw new EntityNotFoundException(
+                    "Estabelecimento não encontrado"
+            );
+        }
+
+        List<InventarioProdutoDto> resultados =
+                new ArrayList<>();
+
+        for (InventarioContagemItemDto item : itens) {
+
+            InventarioProdutoDto resultado =
+                    registrarContagem(
+                            estabelecimentoId,
+                            item.produtoId(),
+                            item.quantidadeContada(),
+                            colaboradorId
+                    );
+
+            resultados.add(resultado);
+        }
+
+        return resultados;
+    }
 
 
     /**

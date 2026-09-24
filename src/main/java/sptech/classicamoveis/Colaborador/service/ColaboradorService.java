@@ -223,4 +223,30 @@ public class ColaboradorService {
                 c.getCpf()
         );
     }
+
+    public List<ColaboradorResponseDto> listarEmFerias() {
+        return colaboradorRepository.findAll()
+                .stream()
+                .filter(this::estaDeFerias)
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public void verificarFeriasExpiradas(Colaborador colaborador) {
+
+        if (colaborador.getFeriasDataFim() == null) {
+            return;
+        }
+
+        LocalDate hoje = LocalDate.now();
+
+        if (hoje.isAfter(colaborador.getFeriasDataFim())) {
+
+            colaborador.setEmFerias(false);
+            colaborador.setFeriasDataInicio(null);
+            colaborador.setFeriasDataFim(null);
+
+            colaboradorRepository.save(colaborador);
+        }
+    }
 }
