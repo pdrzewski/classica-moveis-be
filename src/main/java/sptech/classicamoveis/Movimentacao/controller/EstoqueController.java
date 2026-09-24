@@ -9,6 +9,8 @@ import sptech.classicamoveis.Movimentacao.dto.ProdutoEstoqueResponseDto;
 import sptech.classicamoveis.Movimentacao.dto.InventarioContagemRequestDto;
 import sptech.classicamoveis.Movimentacao.dto.InventarioProdutoDto;
 import sptech.classicamoveis.Movimentacao.service.EstoqueService;
+import sptech.classicamoveis.Movimentacao.dto.InventarioContagemItemDto;
+import sptech.classicamoveis.Movimentacao.dto.InventarioContagemLoteRequestDto;
 
 import java.util.HashMap;
 import java.util.List;
@@ -103,6 +105,24 @@ public class EstoqueController {
                         produtoId,
                         request.quantidadeContada(),
                         request.colaboradorId()
+                );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(
+            summary = "Registra várias contagens de produtos no inventário"
+    )
+    @PutMapping("/{estabelecimentoId}/inventario")
+    public ResponseEntity<List<InventarioProdutoDto>> registrarContagemLote(
+            @PathVariable Integer estabelecimentoId,
+            @Valid @RequestBody InventarioContagemLoteRequestDto request) {
+
+        List<InventarioProdutoDto> response =
+                estoqueService.registrarContagemLote(
+                        estabelecimentoId,
+                        request.colaboradorId(),
+                        request.itens()
                 );
 
         return ResponseEntity.ok(response);

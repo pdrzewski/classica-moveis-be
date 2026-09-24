@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import sptech.classicamoveis.Movimentacao.dto.MovimentacaoRequestDto;
 import sptech.classicamoveis.Movimentacao.dto.MovimentacaoResponseDto;
 import sptech.classicamoveis.Movimentacao.service.MovimentacaoService;
+import org.springframework.data.domain.Page;
+import sptech.classicamoveis.Movimentacao.TipoMovimentacao.TipoMovimentacao;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -47,6 +49,30 @@ public class MovimentacaoController {
     @PatchMapping("/{id}/cancelar")
     public ResponseEntity<MovimentacaoResponseDto> cancelar(@PathVariable Integer id) {
         return ResponseEntity.ok(movimentacaoService.cancelar(id));
+    }
+
+    @GetMapping("/historico")
+    public ResponseEntity<Page<MovimentacaoResponseDto>> buscarHistorico(
+            @RequestParam(required = false)
+            TipoMovimentacao tipo,
+
+            @RequestParam(required = false)
+            Integer estabelecimentoId,
+
+            @RequestParam(defaultValue = "0")
+            int page,
+
+            @RequestParam(defaultValue = "10")
+            int size) {
+
+        return ResponseEntity.ok(
+                movimentacaoService.buscarHistorico(
+                        tipo,
+                        estabelecimentoId,
+                        page,
+                        size
+                )
+        );
     }
 }
 

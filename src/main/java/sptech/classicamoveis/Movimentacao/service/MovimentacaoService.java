@@ -23,9 +23,15 @@ import sptech.classicamoveis.Movimentacao.dto.MovimentacaoResponseDto;
 import sptech.classicamoveis.Movimentacao.mapper.MovimentacaoMapper;
 import sptech.classicamoveis.Movimentacao.MovimentacaoRepository;
 import sptech.classicamoveis.Produto.repository.ProdutoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -147,33 +153,35 @@ public class MovimentacaoService {
     }
 
     public MovimentacaoResponseDto concluir(Integer id) {
+
         Movimentacao mov = movimentacaoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Movimentação não encontrada"));
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "Movimentação não encontrada"
+                        )
+                );
 
         if (!mov.getTipoMovimentacao().equals(TipoMovimentacao.VENDA)) {
-            throw new IllegalArgumentException("Apenas vendas pendentes podem ser concluídas");
+            throw new IllegalArgumentException(
+                    "Apenas vendas pendentes podem ser concluídas"
+            );
         }
 
         if (!mov.getStatus().equals(StatusMovimentacao.PENDENTE)) {
-            throw new IllegalArgumentException("Apenas movimentações pendentes podem ser concluídas");
+            throw new IllegalArgumentException(
+                    "Apenas movimentações pendentes podem ser concluídas"
+            );
         }
 
-        // Validar estoque disponível
-        List<ItemMovimentacao> itens = itemRepository.findByMovimentacaoId(id);
-        for (ItemMovimentacao item : itens) {
-            double saldoDisponivel = estoqueService.calcularSaldoDisponivel(
-                    item.getProduto().getId(),
-                    mov.getEstabelecimentoOrigem().getId()
-            );
-            if (saldoDisponivel < item.getQtd()) {
-                throw new IllegalArgumentException("Estoque insuficiente para o produto: " + item.getProduto().getNome());
-            }
-        }
+        List<ItemMovimentacao> itens =
+                itemRepository.findByMovimentacaoId(id);
 
         mov.setStatus(StatusMovimentacao.CONCLUIDO);
+
         Movimentacao saved = movimentacaoRepository.save(mov);
 
         MovimentacaoResponseDto dto = mapper.toResponseDTO(saved);
+
         dto.setItens(mapper.toItemResponseDTOList(itens));
 
         return dto;
@@ -219,14 +227,26 @@ public class MovimentacaoService {
     }
 
     private void validarVenda(MovimentacaoRequestDto dto) {
-        if (dto.getEstabelecimentoOrigemId() == null || dto.getClienteId() == null || 
-            dto.getColaboradorId() == null || dto.getFormaPagamento() == null) {
-            throw new IllegalArgumentException("Venda deve ter: estabelecimento origem, cliente, colaborador e forma de pagamento");
+
+        if (dto.getEstabelecimentoOrigemId() == null ||
+                dto.getClienteId() == null ||
+                dto.getColaboradorId() == null ||
+                dto.getFormaPagamento() == null) {
+
+            throw new IllegalArgumentException(
+                    "Venda deve ter: estabelecimento origem, cliente, colaborador e forma de pagamento"
+            );
         }
 
-        if (dto.getEstabelecimentoDestinoId() != null || dto.getFornecedorId() != null) {
-            throw new IllegalArgumentException("Venda não pode ter estabelecimento destino ou fornecedor");
+        if (dto.getEstabelecimentoDestinoId() != null ||
+                dto.getFornecedorId() != null) {
+
+            throw new IllegalArgumentException(
+                    "Venda não pode ter estabelecimento destino ou fornecedor"
+            );
         }
+
+        validarEstoqueVenda(dto);
     }
 
     private void validarCompra(MovimentacaoRequestDto dto) {
@@ -241,18 +261,34 @@ public class MovimentacaoService {
     }
 
     private void validarTransferencia(MovimentacaoRequestDto dto) {
-        if (dto.getEstabelecimentoOrigemId() == null || dto.getEstabelecimentoDestinoId() == null || 
-            dto.getColaboradorId() == null) {
-            throw new IllegalArgumentException("Transferência deve ter: estabelecimento origem, destino e colaborador");
+
+        if (dto.getEstabelecimentoOrigemId() == null ||
+                dto.getEstabelecimentoDestinoId() == null ||
+                dto.getColaboradorId() == null) {
+
+            throw new IllegalArgumentException(
+                    "Transferência deve ter: estabelecimento origem, destino e colaborador"
+            );
         }
 
-        if (dto.getEstabelecimentoOrigemId().equals(dto.getEstabelecimentoDestinoId())) {
-            throw new IllegalArgumentException("Origem e destino devem ser estabelecimentos diferentes");
+        if (dto.getEstabelecimentoOrigemId()
+                .equals(dto.getEstabelecimentoDestinoId())) {
+
+            throw new IllegalArgumentException(
+                    "Origem e destino devem ser estabelecimentos diferentes"
+            );
         }
 
-        if (dto.getClienteId() != null || dto.getFornecedorId() != null || dto.getFormaPagamento() != null) {
-            throw new IllegalArgumentException("Transferência não pode ter cliente, fornecedor ou forma de pagamento");
+        if (dto.getClienteId() != null ||
+                dto.getFornecedorId() != null ||
+                dto.getFormaPagamento() != null) {
+
+            throw new IllegalArgumentException(
+                    "Transferência não pode ter cliente, fornecedor ou forma de pagamento"
+            );
         }
+
+        validarEstoqueTransferencia(dto);
     }
 
     private void validarAjuste(MovimentacaoRequestDto dto) {
@@ -275,5 +311,162 @@ public class MovimentacaoService {
     public List<MovimentacaoResponseDto> buscarVendasPendentes(Integer estabelecimentoId, 
             java.time.LocalDate dataInicio, java.time.LocalDate dataFim) {
         return listarVendasPendentes(estabelecimentoId);
+    }
+
+    private void validarEstoqueTransferencia(MovimentacaoRequestDto dto) {
+
+        Map<Integer, Integer> quantidadePorProduto = new HashMap<>();
+
+        for (ItemMovimentacaoRequestDto item : dto.getItens()) {
+
+            if (item.getProdutoId() == null) {
+                throw new IllegalArgumentException(
+                        "Produto é obrigatório na transferência"
+                );
+            }
+
+            if (item.getQuantidade() == null ||
+                    item.getQuantidade() <= 0) {
+
+                throw new IllegalArgumentException(
+                        "A quantidade deve ser maior que zero"
+                );
+            }
+
+            quantidadePorProduto.put(
+                    item.getProdutoId(),
+                    quantidadePorProduto.getOrDefault(
+                            item.getProdutoId(),
+                            0
+                    ) + item.getQuantidade()
+            );
+        }
+
+        for (Map.Entry<Integer, Integer> entrada :
+                quantidadePorProduto.entrySet()) {
+
+            Integer produtoId = entrada.getKey();
+            Integer quantidadeSolicitada = entrada.getValue();
+
+            var produto = produtoRepository.findById(produtoId)
+                    .orElseThrow(() ->
+                            new EntityNotFoundException(
+                                    "Produto não encontrado com id: "
+                                            + produtoId
+                            )
+                    );
+
+            double saldoDisponivel =
+                    estoqueService.calcularSaldoDisponivel(
+                            produtoId,
+                            dto.getEstabelecimentoOrigemId()
+                    );
+
+            if (quantidadeSolicitada > saldoDisponivel) {
+
+                throw new IllegalArgumentException(
+                        "Estoque insuficiente para o produto "
+                                + produto.getNome()
+                                + ". Disponível: "
+                                + saldoDisponivel
+                                + ", solicitado: "
+                                + quantidadeSolicitada
+                );
+            }
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public Page<MovimentacaoResponseDto> buscarHistorico(
+            TipoMovimentacao tipo,
+            Integer estabelecimentoId,
+            int page,
+            int size) {
+
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(
+                        Sort.Direction.DESC,
+                        "dataHora"
+                )
+        );
+
+        Page<Movimentacao> movimentacoes =
+                movimentacaoRepository.buscarHistorico(
+                        tipo,
+                        estabelecimentoId,
+                        pageable
+                );
+
+        return movimentacoes.map(movimentacao -> {
+
+            MovimentacaoResponseDto dto =
+                    mapper.toResponseDTO(movimentacao);
+
+            List<ItemMovimentacao> itens =
+                    itemRepository.findByMovimentacaoId(
+                            movimentacao.getId()
+                    );
+
+            dto.setItens(
+                    mapper.toItemResponseDTOList(itens)
+            );
+
+            return dto;
+        });
+    }
+
+    private void validarEstoqueVenda(MovimentacaoRequestDto dto) {
+
+        Map<Integer, Double> quantidadesPorProduto = new HashMap<>();
+
+        for (ItemMovimentacaoRequestDto item : dto.getItens()) {
+
+            Integer produtoId = item.getProdutoId();
+            Integer quantidade = item.getQuantidade();
+
+            if (quantidade == null || quantidade <= 0) {
+                throw new IllegalArgumentException(
+                        "A quantidade do produto deve ser maior que zero"
+                );
+            }
+
+            if (quantidadesPorProduto.containsKey(produtoId)) {
+                quantidadesPorProduto.put(
+                        produtoId,
+                        quantidadesPorProduto.get(produtoId) + quantidade
+                );
+            } else {
+                quantidadesPorProduto.put(produtoId, Double.valueOf(quantidade));
+            }
+        }
+
+        for (Map.Entry<Integer, Double> entrada : quantidadesPorProduto.entrySet()) {
+
+            Integer produtoId = entrada.getKey();
+            Double quantidadeSolicitada = entrada.getValue();
+
+            double estoqueDisponivel = estoqueService.calcularSaldoDisponivel(
+                    produtoId,
+                    dto.getEstabelecimentoOrigemId()
+            );
+
+            if (estoqueDisponivel < quantidadeSolicitada) {
+
+                String nomeProduto = produtoRepository.findById(produtoId)
+                        .map(produto -> produto.getNome())
+                        .orElse("Produto " + produtoId);
+
+                throw new IllegalArgumentException(
+                        "Estoque insuficiente para o produto: "
+                                + nomeProduto
+                                + ". Disponível: "
+                                + estoqueDisponivel
+                                + ", solicitado: "
+                                + quantidadeSolicitada
+                );
+            }
+        }
     }
 }
