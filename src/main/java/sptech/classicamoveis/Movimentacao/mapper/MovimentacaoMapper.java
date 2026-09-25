@@ -19,6 +19,7 @@ public class MovimentacaoMapper {
         MovimentacaoResponseDto dto = new MovimentacaoResponseDto();
         dto.setId(movimentacao.getId());
         dto.setDataHora(movimentacao.getDataHora());
+        dto.setDataHoraEntrega(movimentacao.getDataHoraEntrega());
         dto.setTipoMovimentacao(movimentacao.getTipoMovimentacao());
         dto.setStatus(movimentacao.getStatus());
         dto.setFormaPagamento(movimentacao.getFormaPagamento());

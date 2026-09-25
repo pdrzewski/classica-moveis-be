@@ -177,6 +177,7 @@ public class MovimentacaoService {
                 itemRepository.findByMovimentacaoId(id);
 
         mov.setStatus(StatusMovimentacao.CONCLUIDO);
+        mov.setDataHoraEntrega(LocalDateTime.now());
 
         Movimentacao saved = movimentacaoRepository.save(mov);
 

@@ -26,6 +26,9 @@ public class Movimentacao {
     @Column(name = "data_hora")
     private LocalDateTime dataHora;
 
+    @Column(name = "data_hora_entrega")
+    private LocalDateTime dataHoraEntrega;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_movimentacao", nullable = false)
     private TipoMovimentacao tipoMovimentacao;
@@ -159,4 +162,8 @@ public class Movimentacao {
     public void setFornecedor(Fornecedor fornecedor) {
         this.fornecedor = fornecedor;
     }
+
+    public LocalDateTime getDataHoraEntrega() {return dataHoraEntrega;}
+
+    public void setDataHoraEntrega(LocalDateTime dataHoraEntrega) {this.dataHoraEntrega = dataHoraEntrega;}
 }
