@@ -3,6 +3,7 @@ package sptech.classicamoveis.Colaborador.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDate;
+import sptech.classicamoveis.Endereco.dto.EnderecoResponseDTO;
 
 @Schema(description = "Dados de colaborador retornados pela API")
 public class ColaboradorResponseDto {
@@ -37,6 +38,9 @@ public class ColaboradorResponseDto {
     private Integer estabelecimentoId;
     @Schema(example = "38912233045")
     private String cpf;
+    private String telefone1;
+    private String telefone2;
+    private EnderecoResponseDTO endereco;
 
     public ColaboradorResponseDto() {
     }
@@ -44,7 +48,8 @@ public class ColaboradorResponseDto {
     public ColaboradorResponseDto(Integer id, String nome, Integer cargoId, String cargoNome, Integer usuarioId,
                                   Boolean emFerias, LocalDate feriasDataInicio, LocalDate feriasDataFim,
                                   LocalDate dataAdmissao, LocalDate dataNascimento, Double salario,
-                                  String carteiraTrabalho, Integer comissao, Integer estabelecimentoId, String cpf) {
+                                  String carteiraTrabalho, Integer comissao, Integer estabelecimentoId, String cpf,
+                                  String telefone1, String telefone2, EnderecoResponseDTO endereco) {
         this.id = id;
         this.nome = nome;
         this.cargoId = cargoId;
@@ -60,6 +65,9 @@ public class ColaboradorResponseDto {
         this.comissao = comissao;
         this.estabelecimentoId = estabelecimentoId;
         this.cpf = cpf;
+        this.telefone1 = telefone1;
+        this.telefone2 = telefone2;
+        this.endereco = endereco;
     }
 
     public Integer getId() { return id; }
@@ -115,5 +123,29 @@ public class ColaboradorResponseDto {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public String getTelefone1() {
+        return telefone1;
+    }
+
+    public void setTelefone1(String telefone1) {
+        this.telefone1 = telefone1;
+    }
+
+    public String getTelefone2() {
+        return telefone2;
+    }
+
+    public void setTelefone2(String telefone2) {
+        this.telefone2 = telefone2;
+    }
+
+    public EnderecoResponseDTO getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(EnderecoResponseDTO endereco) {
+        this.endereco = endereco;
     }
 }

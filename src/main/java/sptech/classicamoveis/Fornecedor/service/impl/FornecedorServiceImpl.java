@@ -52,7 +52,7 @@ public class FornecedorServiceImpl implements FornecedorService {
         endereco.setNumero(dto.numero());
         endereco.setComplemento(dto.complemento());
         endereco.setEstado(dto.estado());
-        
+
         Endereco enderecoSalvo = enderecoRepository.save(endereco);
         Fornecedor fornecedor = fornecedorMapper.toEntityFromComEnderecoDTO(dto, enderecoSalvo);
         return fornecedorMapper.toResponseDTO(fornecedorRepository.save(fornecedor));

@@ -21,6 +21,8 @@ public class ProdutoMapper {
                 produto.getNome(),
                 produto.getSku(),
                 produto.getCodigoBarras(),
+                produto.getNcm(),
+                produto.getCfop(),
                 produto.getUnidadeMedida(),
                 produto.getMarca(),
                 produto.getPrecoCusto(),
@@ -45,6 +47,8 @@ public class ProdutoMapper {
         produto.setCategoria(categoria);
         produto.setSku(dto.sku());
         produto.setCodigoBarras(dto.codigoBarras());
+        produto.setNcm(dto.ncm());
+        produto.setCfop(dto.cfop());
         produto.setUnidadeMedida(dto.unidadeMedida());
         produto.setMarca(dto.marca());
         produto.setPrecoCusto(dto.precoCusto());

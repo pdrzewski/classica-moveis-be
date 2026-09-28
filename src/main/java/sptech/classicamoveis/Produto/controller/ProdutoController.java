@@ -39,9 +39,7 @@ public class ProdutoController {
 
     @Operation(
             summary = "Lista produtos abaixo do estoque mínimo",
-            description = "Para cada produto, soma o estoque atual (calculado pelo EstoqueService, mesmo cálculo " +
-                    "usado no módulo de Estoque) em todos os estabelecimentos e retorna os produtos cujo total " +
-                    "é menor ou igual ao estoque mínimo cadastrado. Não filtra por estabelecimento."
+            description = "Considera somente o estoque atual da matriz, comparando-o com o estoque mínimo cadastrado para cada produto."
     )
     @GetMapping("/estoque-baixo")
     public ResponseEntity<List<ProdutoEstoqueBaixoDTO>> listarProdutosAbaixoDoEstoqueMinimo() {

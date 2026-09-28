@@ -35,6 +35,12 @@ public class Produto {
     @Column(name = "codigo_barras", length = 45)
     private String codigoBarras;
 
+    @Column(name = "ncm", length = 8)
+    private String ncm;
+
+    @Column(name = "cfop", length = 4)
+    private String cfop;
+
     @Column(name = "unidade_medida", length = 45)
     private String unidadeMedida;
 
@@ -99,6 +105,22 @@ public class Produto {
 
     public void setCodigoBarras(String codigoBarras) {
         this.codigoBarras = codigoBarras;
+    }
+
+    public String getNcm() {
+        return ncm;
+    }
+
+    public void setNcm(String ncm) {
+        this.ncm = ncm;
+    }
+
+    public String getCfop() {
+        return cfop;
+    }
+
+    public void setCfop(String cfop) {
+        this.cfop = cfop;
     }
 
     public String getUnidadeMedida() {

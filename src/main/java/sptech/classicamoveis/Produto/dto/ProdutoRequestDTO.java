@@ -30,6 +30,16 @@ public record ProdutoRequestDTO(
         @Schema(description = "Código de barras (EAN)", example = "7891234567895")
         String codigoBarras,
 
+        @Size(max = 8, message = "NCM deve ter no máximo 8 caracteres")
+        @jakarta.validation.constraints.Pattern(regexp = "\\d{8}", message = "NCM deve conter 8 números")
+        @Schema(description = "Nomenclatura Comum do Mercosul", example = "94036000")
+        String ncm,
+
+        @Size(max = 4, message = "CFOP deve ter no máximo 4 caracteres")
+        @jakarta.validation.constraints.Pattern(regexp = "\\d{4}", message = "CFOP deve conter 4 números")
+        @Schema(description = "Código Fiscal de Operações e Prestações", example = "5102")
+        String cfop,
+
         @Size(max = 45, message = "Unidade de medida deve ter no máximo 45 caracteres")
         @Schema(description = "Unidade de medida", example = "UN")
         String unidadeMedida,

@@ -1,6 +1,7 @@
 package sptech.classicamoveis.Colaborador.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
@@ -26,5 +27,12 @@ public record ColaboradorRequestDto(
 
         @Schema(example = "1") Integer estabelecimentoId,
 
-        @Schema(example = "38912233045") String cpf
-) {}
+        @Schema(example = "38912233045") String cpf,
+
+        @Size(max = 20, message = "Telefone1 deve ter no máximo 20 caracteres") @Schema(example = "11912345678") String telefone1,
+
+        @Size(max = 20, message = "Telefone2 deve ter no máximo 20 caracteres") @Schema(example = "11987654321") String telefone2,
+
+        @Schema(example = "22") Integer enderecoId
+) {
+}

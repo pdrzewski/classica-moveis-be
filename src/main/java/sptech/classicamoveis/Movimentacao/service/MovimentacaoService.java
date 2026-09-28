@@ -52,11 +52,11 @@ public class MovimentacaoService {
     public MovimentacaoResponseDto buscarPorId(Integer id) {
         Movimentacao mov = movimentacaoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Movimentação não encontrada com id: " + id));
-        
+
         MovimentacaoResponseDto dto = mapper.toResponseDTO(mov);
         List<ItemMovimentacao> itens = itemRepository.findByMovimentacaoId(id);
         dto.setItens(mapper.toItemResponseDTOList(itens));
-        
+
         return dto;
     }
 
@@ -66,19 +66,19 @@ public class MovimentacaoService {
                 TipoMovimentacao.VENDA,
                 StatusMovimentacao.PENDENTE
         );
-        
+
         List<Movimentacao> vendasFiltradas = new java.util.ArrayList<>();
         if (estabelecimentoId != null) {
             for (Movimentacao venda : vendas) {
-                if (venda.getEstabelecimentoOrigem() != null && 
-                    venda.getEstabelecimentoOrigem().getId().equals(estabelecimentoId)) {
+                if (venda.getEstabelecimentoOrigem() != null &&
+                        venda.getEstabelecimentoOrigem().getId().equals(estabelecimentoId)) {
                     vendasFiltradas.add(venda);
                 }
             }
         } else {
             vendasFiltradas.addAll(vendas);
         }
-        
+
         List<MovimentacaoResponseDto> dtoList = new java.util.ArrayList<>();
         for (Movimentacao mov : vendasFiltradas) {
             MovimentacaoResponseDto dto = mapper.toResponseDTO(mov);
@@ -219,6 +219,16 @@ public class MovimentacaoService {
             throw new IllegalArgumentException("A movimentação deve conter pelo menos um item");
         }
 
+        for (ItemMovimentacaoRequestDto item : dto.getItens()) {
+            if (item.getProdutoId() == null) {
+                throw new IllegalArgumentException("Produto é obrigatório em todos os itens");
+            }
+
+            if (item.getQuantidade() == null || item.getQuantidade() <= 0) {
+                throw new IllegalArgumentException("A quantidade de cada item deve ser maior que zero");
+            }
+        }
+
         switch (dto.getTipoMovimentacao()) {
             case VENDA -> validarVenda(dto);
             case COMPRA -> validarCompra(dto);
@@ -251,8 +261,8 @@ public class MovimentacaoService {
     }
 
     private void validarCompra(MovimentacaoRequestDto dto) {
-        if (dto.getEstabelecimentoDestinoId() == null || dto.getFornecedorId() == null || 
-            dto.getColaboradorId() == null || dto.getFormaPagamento() == null) {
+        if (dto.getEstabelecimentoDestinoId() == null || dto.getFornecedorId() == null ||
+                dto.getColaboradorId() == null || dto.getFormaPagamento() == null) {
             throw new IllegalArgumentException("Compra deve ter: estabelecimento destino, fornecedor, colaborador e forma de pagamento");
         }
 
@@ -293,14 +303,53 @@ public class MovimentacaoService {
     }
 
     private void validarAjuste(MovimentacaoRequestDto dto) {
-        if (dto.getEstabelecimentoOrigemId() == null || dto.getColaboradorId() == null || 
-            dto.getObservacao() == null || dto.getObservacao().isEmpty()) {
+        if (dto.getEstabelecimentoOrigemId() == null || dto.getColaboradorId() == null ||
+                dto.getObservacao() == null || dto.getObservacao().isEmpty()) {
             throw new IllegalArgumentException("Ajuste deve ter: estabelecimento origem, colaborador e observação");
         }
 
-        if (dto.getEstabelecimentoDestinoId() != null || dto.getClienteId() != null || 
-            dto.getFornecedorId() != null || dto.getFormaPagamento() != null) {
+        if (dto.getEstabelecimentoDestinoId() != null || dto.getClienteId() != null ||
+                dto.getFornecedorId() != null || dto.getFormaPagamento() != null) {
             throw new IllegalArgumentException("Ajuste não pode ter estabelecimento destino, cliente, fornecedor ou forma de pagamento");
+        }
+
+        if (dto.getTipoMovimentacao() == TipoMovimentacao.AJUSTE_SAIDA) {
+            validarEstoqueAjusteSaida(dto);
+        }
+    }
+
+    private void validarEstoqueAjusteSaida(MovimentacaoRequestDto dto) {
+        Map<Integer, Integer> quantidadePorProduto = new HashMap<>();
+
+        for (ItemMovimentacaoRequestDto item : dto.getItens()) {
+            quantidadePorProduto.put(
+                    item.getProdutoId(),
+                    quantidadePorProduto.getOrDefault(item.getProdutoId(), 0)
+                            + item.getQuantidade()
+            );
+        }
+
+        for (Map.Entry<Integer, Integer> entrada : quantidadePorProduto.entrySet()) {
+            Integer produtoId = entrada.getKey();
+            Integer quantidadeSolicitada = entrada.getValue();
+
+            double estoqueDisponivel = estoqueService.calcularSaldoDisponivel(
+                    produtoId,
+                    dto.getEstabelecimentoOrigemId()
+            );
+
+            if (quantidadeSolicitada > estoqueDisponivel) {
+                String nomeProduto = produtoRepository.findById(produtoId)
+                        .map(produto -> produto.getNome())
+                        .orElse("Produto " + produtoId);
+
+                throw new IllegalArgumentException(
+                        "Estoque insuficiente para o ajuste de saída do produto: "
+                                + nomeProduto
+                                + ". Disponível: " + estoqueDisponivel
+                                + ", solicitado: " + quantidadeSolicitada
+                );
+            }
         }
     }
 
@@ -309,8 +358,8 @@ public class MovimentacaoService {
     }
 
     @Transactional(readOnly = true)
-    public List<MovimentacaoResponseDto> buscarVendasPendentes(Integer estabelecimentoId, 
-            java.time.LocalDate dataInicio, java.time.LocalDate dataFim) {
+    public List<MovimentacaoResponseDto> buscarVendasPendentes(Integer estabelecimentoId,
+                                                               java.time.LocalDate dataInicio, java.time.LocalDate dataFim) {
         return listarVendasPendentes(estabelecimentoId);
     }
 
