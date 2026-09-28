@@ -9,6 +9,8 @@ import sptech.classicamoveis.Colaborador.AniversarioColaboradorDto;
 import sptech.classicamoveis.Colaborador.FeriasRequestDto;
 import sptech.classicamoveis.Colaborador.dto.ColaboradorRequestDto;
 import sptech.classicamoveis.Colaborador.dto.ColaboradorResponseDto;
+import sptech.classicamoveis.Endereco.Endereco;
+import sptech.classicamoveis.Endereco.repository.EnderecoRepository;
 import sptech.classicamoveis.Colaborador.model.Colaborador;
 import sptech.classicamoveis.Colaborador.repository.ColaboradorRepository;
 import sptech.classicamoveis.Estabelecimento.Estabelecimento;
@@ -31,6 +33,7 @@ public class ColaboradorService {
     private final CargoRepository cargoRepository;
     private final UsuarioRepository usuarioRepository;
     private final EstabelecimentoRepository estabelecimentoRepository;
+    private final EnderecoRepository enderecoRepository;
 
     public List<ColaboradorResponseDto> listarTodos() {
         return colaboradorRepository.findAll().stream()
@@ -146,6 +149,14 @@ public class ColaboradorService {
         colaborador.setCarteiraTrabalho(dto.carteiraTrabalho());
         colaborador.setComissao(dto.comissao());
         colaborador.setCpf(dto.cpf());
+        colaborador.setTelefone1(dto.telefone1());
+        colaborador.setTelefone2(dto.telefone2());
+
+        Endereco endereco = dto.enderecoId() == null ? null :
+                enderecoRepository.findById(dto.enderecoId())
+                        .orElseThrow(() -> new EntityNotFoundException(
+                                "Endereço não encontrado com id: " + dto.enderecoId()));
+        colaborador.setEndereco(endereco);
     }
 
     private void validarDuplicidade(ColaboradorRequestDto dto) {
@@ -220,7 +231,20 @@ public class ColaboradorService {
                 c.getCarteiraTrabalho(),
                 c.getComissao(),
                 estabelecimentoId,
-                c.getCpf()
+                c.getCpf(),
+                c.getTelefone1(),
+                c.getTelefone2(),
+                c.getEndereco() == null ? null :
+                        new sptech.classicamoveis.Endereco.dto.EnderecoResponseDTO(
+                                c.getEndereco().getId(),
+                                c.getEndereco().getCep(),
+                                c.getEndereco().getLogradouro(),
+                                c.getEndereco().getBairro(),
+                                c.getEndereco().getCidade(),
+                                c.getEndereco().getNumero(),
+                                c.getEndereco().getComplemento(),
+                                c.getEndereco().getEstado()
+                        )
         );
     }
 

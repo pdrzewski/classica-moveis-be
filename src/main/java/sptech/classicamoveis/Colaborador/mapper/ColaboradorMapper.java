@@ -3,9 +3,16 @@ package sptech.classicamoveis.Colaborador.mapper;
 import org.springframework.stereotype.Component;
 import sptech.classicamoveis.Colaborador.dto.ColaboradorResponseDto;
 import sptech.classicamoveis.Colaborador.model.Colaborador;
+import sptech.classicamoveis.Endereco.mapper.EnderecoMapper;
 
 @Component
 public class ColaboradorMapper {
+
+    private final EnderecoMapper enderecoMapper;
+
+    public ColaboradorMapper(EnderecoMapper enderecoMapper) {
+        this.enderecoMapper = enderecoMapper;
+    }
 
     public ColaboradorResponseDto toResponseDTO(Colaborador colaborador) {
         if (colaborador == null) {
@@ -32,7 +39,10 @@ public class ColaboradorMapper {
                 colaborador.getCarteiraTrabalho(),
                 colaborador.getComissao(),
                 estabelecimentoId,
-                colaborador.getCpf()
+                colaborador.getCpf(),
+                colaborador.getTelefone1(),
+                colaborador.getTelefone2(),
+                enderecoMapper.toResponseDTO(colaborador.getEndereco())
         );
     }
 }

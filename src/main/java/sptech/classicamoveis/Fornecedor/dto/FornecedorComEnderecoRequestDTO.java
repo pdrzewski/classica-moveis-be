@@ -1,59 +1,54 @@
 package sptech.classicamoveis.Fornecedor.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-@Schema(description = "Dados para cadastro de fornecedor já com o endereço")
 public record FornecedorComEnderecoRequestDTO(
-
-        @NotBlank(message = "Nome e obrigatorio")
-        @Size(max = 45, message = "Nome deve ter no maximo 45 caracteres")
+        @NotBlank(message = "Nome é obrigatório")
+        @Size(max = 45, message = "Nome deve ter no máximo 45 caracteres")
         @Schema(example = "Rufato Estofados Ltda")
         String nome,
 
-        @NotBlank(message = "CNPJ e obrigatorio")
-        @Size(max = 14, message = "CNPJ deve ter no maximo 14 caracteres")
+        @NotBlank(message = "CNPJ é obrigatório")
+        @Size(max = 14, message = "CNPJ deve ter no máximo 14 caracteres")
         @Schema(example = "12345678000199")
         String cnpj,
 
-        @Size(max = 45, message = "Representante deve ter no maximo 45 caracteres")
-        @Schema(example = "Carlos Rufato")
-        String representante,
-
-        @Size(max = 11, message = "Telefone1 deve ter no maximo 11 caracteres")
+        @Size(max = 11, message = "Telefone1 deve ter no máximo 11 caracteres")
         @Schema(example = "11912345678")
         String telefone1,
 
-        @Size(max = 11, message = "Telefone2 deve ter no maximo 11 caracteres")
+        @Size(max = 11, message = "Telefone2 deve ter no máximo 11 caracteres")
         @Schema(example = "1140028922")
         String telefone2,
 
-        @NotBlank(message = "CEP é obrigatório")
-        @Schema(example = "04578-000")
-        String cep,
+        @Size(max = 11, message = "WhatsApp deve ter no máximo 11 caracteres")
+        @Schema(example = "11987654321")
+        String whatsapp,
 
-        @NotBlank(message = "Logradouro é obrigatório")
-        @Schema(example = "Rua Industrial")
-        String logradouro,
+        @Email(message = "E-mail inválido")
+        @Size(max = 100, message = "E-mail deve ter no máximo 100 caracteres")
+        @Schema(example = "contato@rufato.com.br")
+        String email,
 
-        @NotBlank(message = "Bairro é obrigatório")
-        @Schema(example = "Vila Industrial")
-        String bairro,
-
-        @NotBlank(message = "Cidade é obrigatório")
-        @Schema(example = "Guarulhos")
-        String cidade,
-
-        @NotBlank(message = "Número é obrigatório")
-        @Schema(example = "540")
-        String numero,
-
-        @Schema(example = "Galpão 3")
+        @NotBlank(message = "CEP é obrigatório") String cep,
+        @NotBlank(message = "Logradouro é obrigatório") String logradouro,
+        @NotBlank(message = "Bairro é obrigatório") String bairro,
+        @NotBlank(message = "Cidade é obrigatório") String cidade,
+        @NotBlank(message = "Número é obrigatório") String numero,
         String complemento,
+        @NotBlank(message = "Estado é obrigatório") String estado
 
-        @NotBlank(message = "Estado é obrigatório")
-        @Schema(example = "SP")
-        String estado
 ) {
+        // Compatibilidade com o contrato anterior, que possuía o campo representante.
+        public FornecedorComEnderecoRequestDTO(String nome, String cnpj, String representante,
+                                               String telefone1, String telefone2,
+                                               String cep, String logradouro, String bairro,
+                                               String cidade, String numero, String complemento,
+                                               String estado) {
+                this(nome, cnpj, telefone1, telefone2, null, null,
+                        cep, logradouro, bairro, cidade, numero, complemento, estado);
+        }
 }

@@ -1,6 +1,5 @@
 package sptech.classicamoveis.Fornecedor.mapper;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import sptech.classicamoveis.Endereco.Endereco;
@@ -20,9 +19,10 @@ public class FornecedorMapper {
         return Fornecedor.builder()
                 .nome(dto.nome())
                 .cnpj(dto.cnpj())
-                .representante(dto.representante())
                 .telefone1(dto.telefone1())
                 .telefone2(dto.telefone2())
+                .whatsapp(dto.whatsapp())
+                .email(dto.email())
                 .endereco(endereco)
                 .build();
     }
@@ -31,9 +31,10 @@ public class FornecedorMapper {
         return Fornecedor.builder()
                 .nome(dto.nome())
                 .cnpj(dto.cnpj())
-                .representante(dto.representante())
                 .telefone1(dto.telefone1())
                 .telefone2(dto.telefone2())
+                .whatsapp(dto.whatsapp())
+                .email(dto.email())
                 .endereco(endereco)
                 .build();
     }
@@ -41,9 +42,10 @@ public class FornecedorMapper {
     public void updateEntityFromDto(FornecedorRequestDTO dto, Endereco endereco, Fornecedor fornecedor) {
         fornecedor.setNome(dto.nome());
         fornecedor.setCnpj(dto.cnpj());
-        fornecedor.setRepresentante(dto.representante());
         fornecedor.setTelefone1(dto.telefone1());
         fornecedor.setTelefone2(dto.telefone2());
+        fornecedor.setWhatsapp(dto.whatsapp());
+        fornecedor.setEmail(dto.email());
         fornecedor.setEndereco(endereco);
     }
 
@@ -52,9 +54,10 @@ public class FornecedorMapper {
                 fornecedor.getId(),
                 fornecedor.getNome(),
                 fornecedor.getCnpj(),
-                fornecedor.getRepresentante(),
                 fornecedor.getTelefone1(),
                 fornecedor.getTelefone2(),
+                fornecedor.getWhatsapp(),
+                fornecedor.getEmail(),
                 enderecoMapper.toResponseDTO(fornecedor.getEndereco())
         );
     }

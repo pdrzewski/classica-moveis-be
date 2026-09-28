@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import sptech.classicamoveis.Cargo.model.Cargo;
+import sptech.classicamoveis.Endereco.Endereco;
 import sptech.classicamoveis.Estabelecimento.Estabelecimento;
 import sptech.classicamoveis.Usuario.model.Usuario;
 
@@ -61,6 +62,16 @@ public class Colaborador {
 
     @Length(max = 11)
     private  String cpf;
+
+    @Column(name = "telefone1", length = 20)
+    private String telefone1;
+
+    @Column(name = "telefone2", length = 20)
+    private String telefone2;
+
+    @ManyToOne
+    @JoinColumn(name = "endereco_id")
+    private Endereco endereco;
 
     @ManyToOne
     @JoinColumn(name = "estabelecimento_id")

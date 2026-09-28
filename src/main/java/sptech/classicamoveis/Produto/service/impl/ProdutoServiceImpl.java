@@ -124,18 +124,26 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     @Transactional(readOnly = true)
     public List<ProdutoEstoqueBaixoDTO> listarProdutosAbaixoDoEstoqueMinimo() {
-        List<Estabelecimento> estabelecimentos = estabelecimentoRepository.findAll();
+        Estabelecimento matriz = estabelecimentoRepository
+                .findFirstByNomeContainingIgnoreCase("matriz")
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
+                        "Estabelecimento da matriz não encontrado. Cadastre a matriz com 'Matriz' no nome."
+                ));
+
         List<ProdutoEstoqueBaixoDTO> produtosAbaixoDoMinimo = new ArrayList<>();
 
         for (Produto produto : produtoRepository.findAll()) {
-            long estoqueAtual = 0L;
-            for (Estabelecimento estabelecimento : estabelecimentos) {
-                estoqueAtual += estoqueService.calcularSaldoProduto(estabelecimento.getId(), produto.getId());
-            }
+            long estoqueAtual = estoqueService.calcularSaldoProduto(
+                    matriz.getId(),
+                    produto.getId()
+            );
 
             if (estoqueAtual <= produto.getEstoqueMinimo()) {
                 produtosAbaixoDoMinimo.add(
-                        new ProdutoEstoqueBaixoDTO(produtoMapper.toResponseDTO(produto), estoqueAtual)
+                        new ProdutoEstoqueBaixoDTO(
+                                produtoMapper.toResponseDTO(produto),
+                                estoqueAtual
+                        )
                 );
             }
         }
