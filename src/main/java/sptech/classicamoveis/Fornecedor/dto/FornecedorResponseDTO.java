@@ -14,10 +14,4 @@ public record FornecedorResponseDTO(
         EnderecoResponseDTO endereco
 
 ) {
-    // Compatibilidade com o contrato anterior, que possuía o campo representante.
-    public FornecedorResponseDTO(Long id, String nome, String cnpj, String representante,
-                                 String telefone1, String telefone2,
-                                 EnderecoResponseDTO endereco) {
-        this(id, nome, cnpj, telefone1, telefone2, null, null, endereco);
-    }
 }

@@ -19,15 +19,4 @@ public record ProdutoResponseDTO(
         @Schema(example = "5") Integer estoqueMinimo,
         @Schema(example = "true") Boolean ativo
 ) {
-    // Compatibilidade com o contrato anterior sem NCM e CFOP.
-    public ProdutoResponseDTO(Integer id, Long fornecedor, Integer categoria, String nome,
-                              String sku, String codigoBarras, String unidadeMedida,
-                              String marca, Double precoCusto, Double precoVenda,
-                              Integer estoqueMinimo, Boolean ativo) {
-        this(id,
-                fornecedor == null ? null : String.valueOf(fornecedor),
-                categoria == null ? null : String.valueOf(categoria),
-                nome, sku, codigoBarras, null, null, unidadeMedida, marca,
-                precoCusto, precoVenda, estoqueMinimo, ativo);
-    }
 }

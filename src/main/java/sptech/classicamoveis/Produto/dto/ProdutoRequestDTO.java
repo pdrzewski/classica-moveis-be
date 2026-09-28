@@ -67,12 +67,4 @@ public record ProdutoRequestDTO(
         @Schema(description = "Indica se o produto está ativo para venda", example = "true")
         Boolean ativo
 ) {
-        // Compatibilidade com o contrato anterior sem NCM e CFOP.
-        public ProdutoRequestDTO(Long fornecedorId, Integer categoriaId, String nome,
-                                 String sku, String codigoBarras, String unidadeMedida,
-                                 String marca, Double precoCusto, Double precoVenda,
-                                 Integer estoqueMinimo, Boolean ativo) {
-                this(fornecedorId, categoriaId, nome, sku, codigoBarras, null, null,
-                        unidadeMedida, marca, precoCusto, precoVenda, estoqueMinimo, ativo);
-        }
 }

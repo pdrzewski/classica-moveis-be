@@ -35,14 +35,4 @@ public record ColaboradorRequestDto(
 
         @Schema(example = "22") Integer enderecoId
 ) {
-    // Compatibilidade com o contrato anterior sem telefones e endereço.
-    public ColaboradorRequestDto(String nome, Integer cargoId, Integer usuarioId,
-                                 Boolean emFerias, LocalDate dataAdmissao,
-                                 LocalDate dataNascimento, Double salario,
-                                 String carteiraTrabalho, Integer comissao,
-                                 Integer estabelecimentoId, String cpf) {
-        this(nome, cargoId, usuarioId, emFerias, dataAdmissao, dataNascimento,
-                salario, carteiraTrabalho, comissao, estabelecimentoId, cpf,
-                null, null, null);
-    }
 }

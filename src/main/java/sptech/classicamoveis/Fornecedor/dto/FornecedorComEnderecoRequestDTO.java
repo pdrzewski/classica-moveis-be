@@ -42,13 +42,4 @@ public record FornecedorComEnderecoRequestDTO(
         @NotBlank(message = "Estado é obrigatório") String estado
 
 ) {
-        // Compatibilidade com o contrato anterior, que possuía o campo representante.
-        public FornecedorComEnderecoRequestDTO(String nome, String cnpj, String representante,
-                                               String telefone1, String telefone2,
-                                               String cep, String logradouro, String bairro,
-                                               String cidade, String numero, String complemento,
-                                               String estado) {
-                this(nome, cnpj, telefone1, telefone2, null, null,
-                        cep, logradouro, bairro, cidade, numero, complemento, estado);
-        }
 }
