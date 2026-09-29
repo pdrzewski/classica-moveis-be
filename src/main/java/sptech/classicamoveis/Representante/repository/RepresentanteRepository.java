@@ -7,7 +7,8 @@ import sptech.classicamoveis.Representante.model.Representante;
 
 import java.util.List;
 
-public interface RepresentanteRepository extends JpaRepository<Representante, Long> {
+public interface RepresentanteRepository
+        extends JpaRepository<Representante, Long> {
 
     @Query("""
             SELECT DISTINCT r
@@ -16,5 +17,11 @@ public interface RepresentanteRepository extends JpaRepository<Representante, Lo
             WHERE LOWER(r.nome) LIKE LOWER(CONCAT('%', :termo, '%'))
                OR LOWER(f.nome) LIKE LOWER(CONCAT('%', :termo, '%'))
             """)
-    List<Representante> buscarPorTermo(@Param("termo") String termo);
+    List<Representante> buscarPorTermo(
+            @Param("termo") String termo
+    );
+
+    List<Representante> findByFornecedores_Id(
+            Long fornecedorId
+    );
 }
