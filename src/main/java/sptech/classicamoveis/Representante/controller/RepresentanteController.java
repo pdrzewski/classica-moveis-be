@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sptech.classicamoveis.Representante.dto.FornecedorRepresentantesResponseDTO;
 import sptech.classicamoveis.Representante.dto.RepresentanteRequestDTO;
 import sptech.classicamoveis.Representante.dto.RepresentanteResponseDTO;
 import sptech.classicamoveis.Representante.service.RepresentanteService;
@@ -29,6 +30,15 @@ public class RepresentanteController {
     @GetMapping("/{id}")
     public ResponseEntity<RepresentanteResponseDTO> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(representanteService.buscarPorId(id));
+    }
+
+    @GetMapping("/fornecedor/{idFornecedor}")
+    public ResponseEntity<FornecedorRepresentantesResponseDTO> listarPorFornecedor(
+            @PathVariable Long idFornecedor) {
+
+        return ResponseEntity.ok(
+                representanteService.listarPorFornecedor(idFornecedor)
+        );
     }
 
     @PostMapping
