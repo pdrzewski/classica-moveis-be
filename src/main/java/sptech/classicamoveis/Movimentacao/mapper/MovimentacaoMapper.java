@@ -26,6 +26,7 @@ public class MovimentacaoMapper {
 
         dto.setId(movimentacao.getId());
         dto.setDataHora(movimentacao.getDataHora());
+        dto.setDataHoraEntrega(movimentacao.getDataHoraEntrega());
         dto.setTipoMovimentacao(movimentacao.getTipoMovimentacao());
         dto.setStatus(movimentacao.getStatus());
 

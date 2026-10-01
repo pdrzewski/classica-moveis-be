@@ -25,7 +25,10 @@ public class MovimentacaoResponseDto {
 
     @Schema(example = "2026-09-09T14:32:00")
     private LocalDateTime dataHora;
-
+  
+    @Schema(example = "2026-10-05T14:30:00")
+    private LocalDateTime dataHoraEntrega;
+  
     @Schema(example = "VENDA")
     private TipoMovimentacao tipoMovimentacao;
 
