@@ -8,9 +8,11 @@ import sptech.classicamoveis.Estabelecimento.Estabelecimento;
 import sptech.classicamoveis.Fornecedor.model.Fornecedor;
 import sptech.classicamoveis.Movimentacao.TipoMovimentacao.TipoMovimentacao;
 import sptech.classicamoveis.Movimentacao.StatusMovimentacao.StatusMovimentacao;
-import sptech.classicamoveis.Movimentacao.FormaPagamento.FormaPagamento;
+import sptech.classicamoveis.Movimentacao.Pagamento.Pagamento;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "movimentacao")
@@ -33,10 +35,6 @@ public class Movimentacao {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private StatusMovimentacao status;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "forma_pagamento")
-    private FormaPagamento formaPagamento;
 
     @Column(length = 100)
     private String observacao;
@@ -63,6 +61,13 @@ public class Movimentacao {
     @ManyToOne
     @JoinColumn(name = "fornecedor_id")
     private Fornecedor fornecedor;
+
+    @OneToMany(
+            mappedBy = "movimentacao",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Pagamento> pagamentos = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -94,14 +99,6 @@ public class Movimentacao {
 
     public void setStatus(StatusMovimentacao status) {
         this.status = status;
-    }
-
-    public FormaPagamento getFormaPagamento() {
-        return formaPagamento;
-    }
-
-    public void setFormaPagamento(FormaPagamento formaPagamento) {
-        this.formaPagamento = formaPagamento;
     }
 
     public String getObservacao() {
@@ -158,5 +155,13 @@ public class Movimentacao {
 
     public void setFornecedor(Fornecedor fornecedor) {
         this.fornecedor = fornecedor;
+    }
+
+    public List<Pagamento> getPagamentos() {
+        return pagamentos;
+    }
+
+    public void setPagamentos(List<Pagamento> pagamentos) {
+        this.pagamentos = pagamentos;
     }
 }
