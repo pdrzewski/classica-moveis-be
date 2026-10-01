@@ -1,4 +1,4 @@
-package sptech.classicamoveis.Movimentacao.FormaPagamento;
+package sptech.classicamoveis.Movimentacao.Pagamento.FormaPagamento;
 
 public enum FormaPagamento {
     DINHEIRO,

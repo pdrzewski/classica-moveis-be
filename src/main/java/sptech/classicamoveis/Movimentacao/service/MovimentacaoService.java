@@ -4,18 +4,17 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sptech.classicamoveis.Colaborador.model.Colaborador;
 import sptech.classicamoveis.Colaborador.repository.ColaboradorRepository;
-import sptech.classicamoveis.Cliente.Cliente;
 import sptech.classicamoveis.Cliente.repository.ClienteRepository;
-import sptech.classicamoveis.Estabelecimento.Estabelecimento;
 import sptech.classicamoveis.Estabelecimento.repository.EstabelecimentoRepository;
-import sptech.classicamoveis.Fornecedor.model.Fornecedor;
 import sptech.classicamoveis.Fornecedor.repository.FornecedorRepository;
 import sptech.classicamoveis.Movimentacao.Movimentacao;
 import sptech.classicamoveis.Movimentacao.ItemMovimentacao.ItemMovimentacao;
 import sptech.classicamoveis.Movimentacao.ItemMovimentacao.ItemMovimentacaoRepository;
 import sptech.classicamoveis.Movimentacao.ItemMovimentacao.dto.ItemMovimentacaoRequestDto;
+import sptech.classicamoveis.Movimentacao.Pagamento.FormaPagamento.FormaPagamento;
+import sptech.classicamoveis.Movimentacao.Pagamento.Pagamento;
+import sptech.classicamoveis.Movimentacao.Pagamento.dto.PagamentoRequestDto;
 import sptech.classicamoveis.Movimentacao.TipoMovimentacao.TipoMovimentacao;
 import sptech.classicamoveis.Movimentacao.StatusMovimentacao.StatusMovimentacao;
 import sptech.classicamoveis.Movimentacao.dto.MovimentacaoRequestDto;
@@ -95,7 +94,6 @@ public class MovimentacaoService {
         Movimentacao mov = new Movimentacao();
         mov.setDataHora(LocalDateTime.now());
         mov.setTipoMovimentacao(requestDto.getTipoMovimentacao());
-        mov.setFormaPagamento(requestDto.getFormaPagamento());
         mov.setObservacao(requestDto.getObservacao());
 
         // Definir status inicial conforme tipo
@@ -130,6 +128,30 @@ public class MovimentacaoService {
                 .mapToDouble(ItemMovimentacaoRequestDto::getSubtotal)
                 .sum();
         mov.setValorTotal(valorTotal);
+
+        if (requestDto.getPagamentos() != null) {
+
+            for (PagamentoRequestDto pagamentoDto : requestDto.getPagamentos()) {
+
+                Pagamento pagamento = new Pagamento();
+
+                pagamento.setFormaPagamento(
+                        pagamentoDto.getFormaPagamento()
+                );
+
+                pagamento.setValor(
+                        pagamentoDto.getValor()
+                );
+
+                pagamento.setQuantidadeParcelas(
+                        pagamentoDto.getQuantidadeParcelas()
+                );
+
+                pagamento.setMovimentacao(mov);
+
+                mov.getPagamentos().add(pagamento);
+            }
+        }
 
         Movimentacao saved = movimentacaoRepository.save(mov);
 
@@ -239,30 +261,104 @@ public class MovimentacaoService {
 
     private void validarVenda(MovimentacaoRequestDto dto) {
 
-        if (dto.getEstabelecimentoOrigemId() == null ||
-                dto.getClienteId() == null ||
-                dto.getColaboradorId() == null ||
-                dto.getFormaPagamento() == null) {
+            if (dto.getEstabelecimentoOrigemId() == null ||
+                    dto.getClienteId() == null ||
+                    dto.getColaboradorId() == null) {
 
-            throw new IllegalArgumentException(
-                    "Venda deve ter: estabelecimento origem, cliente, colaborador e forma de pagamento"
-            );
+                throw new IllegalArgumentException(
+                        "Venda deve ter: estabelecimento origem, cliente e colaborador"
+                );
+            }
+
+            if (dto.getPagamentos() == null ||
+                    dto.getPagamentos().isEmpty()) {
+
+                throw new IllegalArgumentException(
+                        "A venda deve possuir pelo menos um pagamento"
+                );
+            }
+
+            double valorTotalVenda = 0.0;
+
+            for (ItemMovimentacaoRequestDto item : dto.getItens()) {
+
+                valorTotalVenda += item.getSubtotal();
+            }
+
+            double valorTotalPagamentos = 0.0;
+
+        for (PagamentoRequestDto pagamento : dto.getPagamentos()) {
+
+            if (pagamento.getFormaPagamento() == null) {
+
+                throw new IllegalArgumentException(
+                        "A forma de pagamento é obrigatória"
+                );
+            }
+
+            if (pagamento.getValor() == null ||
+                    pagamento.getValor() <= 0) {
+
+                throw new IllegalArgumentException(
+                        "O valor do pagamento deve ser maior que zero"
+                );
+            }
+
+            // Se não informar parcelas, será considerado 1
+            if (pagamento.getQuantidadeParcelas() == null) {
+                pagamento.setQuantidadeParcelas(1);
+            }
+
+            if (pagamento.getQuantidadeParcelas() <= 0) {
+
+                throw new IllegalArgumentException(
+                        "A quantidade de parcelas deve ser maior que zero"
+                );
+            }
+
+            // Apenas cartão de crédito pode ter mais de uma parcela
+            if (pagamento.getFormaPagamento() != FormaPagamento.CARTAO_CREDITO
+                    && pagamento.getQuantidadeParcelas() > 1) {
+
+                throw new IllegalArgumentException(
+                        "Apenas o cartão de crédito pode ter mais de uma parcela"
+                );
+            }
+
+            valorTotalPagamentos += pagamento.getValor();
         }
 
-        if (dto.getEstabelecimentoDestinoId() != null ||
-                dto.getFornecedorId() != null) {
+            /*
+             * Verifica se a soma dos pagamentos
+             * é igual ao valor da venda.
+             */
+            if (Math.abs(
+                    valorTotalVenda - valorTotalPagamentos
+            ) > 0.01) {
 
-            throw new IllegalArgumentException(
-                    "Venda não pode ter estabelecimento destino ou fornecedor"
-            );
-        }
+                throw new IllegalArgumentException(
+                        "A soma dos pagamentos deve ser igual ao valor total da venda. "
+                                + "Valor da venda: R$ "
+                                + String.format("%.2f", valorTotalVenda)
+                                + ". Valor pago: R$ "
+                                + String.format("%.2f", valorTotalPagamentos)
+                );
+            }
+
+            if (dto.getEstabelecimentoDestinoId() != null ||
+                    dto.getFornecedorId() != null) {
+
+                throw new IllegalArgumentException(
+                        "Venda não pode ter estabelecimento destino ou fornecedor"
+                );
+            }
 
         validarEstoqueVenda(dto);
     }
 
     private void validarCompra(MovimentacaoRequestDto dto) {
         if (dto.getEstabelecimentoDestinoId() == null || dto.getFornecedorId() == null ||
-                dto.getColaboradorId() == null || dto.getFormaPagamento() == null) {
+                dto.getColaboradorId() == null ) {
             throw new IllegalArgumentException("Compra deve ter: estabelecimento destino, fornecedor, colaborador e forma de pagamento");
         }
 
@@ -291,8 +387,7 @@ public class MovimentacaoService {
         }
 
         if (dto.getClienteId() != null ||
-                dto.getFornecedorId() != null ||
-                dto.getFormaPagamento() != null) {
+                dto.getFornecedorId() != null ) {
 
             throw new IllegalArgumentException(
                     "Transferência não pode ter cliente, fornecedor ou forma de pagamento"
@@ -309,7 +404,7 @@ public class MovimentacaoService {
         }
 
         if (dto.getEstabelecimentoDestinoId() != null || dto.getClienteId() != null ||
-                dto.getFornecedorId() != null || dto.getFormaPagamento() != null) {
+                dto.getFornecedorId() != null ) {
             throw new IllegalArgumentException("Ajuste não pode ter estabelecimento destino, cliente, fornecedor ou forma de pagamento");
         }
 
