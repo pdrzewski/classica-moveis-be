@@ -45,6 +45,9 @@ public class Movimentacao {
     @Column(name = "valor_total")
     private Double valorTotal;
 
+    @Column(nullable = false)
+    private Boolean visivel = true;
+
     @ManyToOne
     @JoinColumn(name = "colaborador_id", nullable = false)
     private Colaborador colaborador;
@@ -118,6 +121,14 @@ public class Movimentacao {
 
     public void setValorTotal(Double valorTotal) {
         this.valorTotal = valorTotal;
+    }
+
+    public Boolean getVisivel() {
+        return visivel;
+    }
+
+    public void setVisivel(Boolean visivel) {
+        this.visivel = visivel;
     }
 
     public Colaborador getColaborador() {

@@ -228,6 +228,35 @@ public class MovimentacaoService {
         return dto;
     }
 
+    public MovimentacaoResponseDto ocultar(Integer id) {
+
+        Movimentacao mov = movimentacaoRepository.findById(id)
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "Movimentação não encontrada"
+                        )
+                );
+
+        if (mov.getStatus() == StatusMovimentacao.PENDENTE) {
+            throw new IllegalArgumentException(
+                    "Não é possível ocultar uma venda pendente"
+            );
+        }
+
+        mov.setVisivel(false);
+
+        Movimentacao saved = movimentacaoRepository.save(mov);
+
+        MovimentacaoResponseDto dto = mapper.toResponseDTO(saved);
+
+        List<ItemMovimentacao> itens =
+                itemRepository.findByMovimentacaoId(saved.getId());
+
+        dto.setItens(mapper.toItemResponseDTOList(itens));
+
+        return dto;
+    }
+
     private StatusMovimentacao definirStatusInicial(TipoMovimentacao tipo) {
         return switch (tipo) {
             case VENDA -> StatusMovimentacao.PENDENTE;

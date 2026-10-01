@@ -3,6 +3,7 @@ package sptech.classicamoveis.Movimentacao.controller;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sptech.classicamoveis.Movimentacao.StatusMovimentacao.StatusMovimentacao;
 import sptech.classicamoveis.Movimentacao.dto.MovimentacaoRequestDto;
 import sptech.classicamoveis.Movimentacao.dto.MovimentacaoResponseDto;
 import sptech.classicamoveis.Movimentacao.service.MovimentacaoService;
@@ -49,6 +50,11 @@ public class MovimentacaoController {
     @PatchMapping("/{id}/cancelar")
     public ResponseEntity<MovimentacaoResponseDto> cancelar(@PathVariable Integer id) {
         return ResponseEntity.ok(movimentacaoService.cancelar(id));
+    }
+
+    @PatchMapping("/{id}/ocultar")
+    public ResponseEntity<MovimentacaoResponseDto> ocultar(@PathVariable Integer id) {
+        return ResponseEntity.ok(movimentacaoService.ocultar(id));
     }
 
     @GetMapping("/historico")
