@@ -27,15 +27,16 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Inte
     List<Movimentacao> findByEstabelecimentoDestinoId(Integer estabelecimentoId);
 
     @Query("""
-        SELECT m
-        FROM Movimentacao m
-        WHERE (:tipo IS NULL OR m.tipoMovimentacao = :tipo)
-        AND (
-            :estabelecimentoId IS NULL
-            OR m.estabelecimentoOrigem.id = :estabelecimentoId
-            OR m.estabelecimentoDestino.id = :estabelecimentoId
-        )
-        """)
+    SELECT m
+    FROM Movimentacao m
+    WHERE m.visivel = true
+    AND (:tipo IS NULL OR m.tipoMovimentacao = :tipo)
+    AND (
+        :estabelecimentoId IS NULL
+        OR m.estabelecimentoOrigem.id = :estabelecimentoId
+        OR m.estabelecimentoDestino.id = :estabelecimentoId
+    )
+    """)
     Page<Movimentacao> buscarHistorico(
             @Param("tipo") TipoMovimentacao tipo,
             @Param("estabelecimentoId") Integer estabelecimentoId,
