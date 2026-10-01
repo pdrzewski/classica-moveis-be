@@ -31,6 +31,10 @@ public class CargoService {
         return toResponseDTO(buscarEntidadePorId(id));
     }
 
+    public CargoResponseDto buscarPermissoesPorId(Integer id) {
+        return toResponseDTO(buscarEntidadePorId(id));
+    }
+
     public CargoResponseDto criar(CargoRequestDto dto) {
         Cargo cargo = new Cargo();
         cargo.setCargo(dto.getNome());
@@ -42,6 +46,12 @@ public class CargoService {
         Cargo cargo = buscarEntidadePorId(id);
         cargo.setCargo(dto.getNome());
         cargo.setPermissoes(resolverPermissoes(dto.getPermissoesIds()));
+        return toResponseDTO(cargoRepository.save(cargo));
+    }
+
+    public CargoResponseDto atualizarPermissoes(Integer id, Set<Integer> permissoesIds) {
+        Cargo cargo = buscarEntidadePorId(id);
+        cargo.setPermissoes(resolverPermissoes(permissoesIds));
         return toResponseDTO(cargoRepository.save(cargo));
     }
 
