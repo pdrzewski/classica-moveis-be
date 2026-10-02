@@ -2,7 +2,7 @@ package sptech.classicamoveis.Relatorio.dto;
 
 public class RelatorioVendaProdutoDto {
 
-    private Integer codigoProduto;
+    private String codigoProduto;
     private Integer quantidade;
     private String nomeProduto;
     private Double precoUnitario;
@@ -13,7 +13,7 @@ public class RelatorioVendaProdutoDto {
     }
 
     public RelatorioVendaProdutoDto(
-            Integer codigoProduto,
+            String codigoProduto,
             Integer quantidade,
             String nomeProduto,
             Double precoUnitario,
@@ -28,11 +28,11 @@ public class RelatorioVendaProdutoDto {
         this.total = total;
     }
 
-    public Integer getCodigoProduto() {
+    public String getCodigoProduto() {
         return codigoProduto;
     }
 
-    public void setCodigoProduto(Integer codigoProduto) {
+    public void setCodigoProduto(String codigoProduto) {
         this.codigoProduto = codigoProduto;
     }
 
