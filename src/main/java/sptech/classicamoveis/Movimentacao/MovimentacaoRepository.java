@@ -27,6 +27,25 @@ public interface MovimentacaoRepository extends JpaRepository<Movimentacao, Inte
     List<Movimentacao> findByEstabelecimentoDestinoId(Integer estabelecimentoId);
 
     @Query("""
+        SELECT m
+        FROM Movimentacao m
+        WHERE m.tipoMovimentacao = :tipo
+        AND m.colaborador.id = :colaboradorId
+        AND m.visivel = true
+        AND m.status <> :statusCancelado
+        AND m.dataHora >= :inicio
+        AND m.dataHora < :fim
+        ORDER BY m.dataHora ASC
+    """)
+    List<Movimentacao> buscarVendasPorVendedor(
+            @Param("colaboradorId") Integer colaboradorId,
+            @Param("inicio") java.time.LocalDateTime inicio,
+            @Param("fim") java.time.LocalDateTime fim,
+            @Param("tipo") TipoMovimentacao tipo,
+            @Param("statusCancelado") StatusMovimentacao statusCancelado
+    );
+
+    @Query("""
     SELECT m
     FROM Movimentacao m
     WHERE m.visivel = true
