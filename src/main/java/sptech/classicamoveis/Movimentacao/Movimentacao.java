@@ -45,6 +45,9 @@ public class Movimentacao {
     @Column(name = "valor_total")
     private Double valorTotal;
 
+    @Column
+    private Double frete = 0.0;
+
     @Column(nullable = false)
     private Boolean visivel = true;
 
@@ -121,6 +124,14 @@ public class Movimentacao {
 
     public void setValorTotal(Double valorTotal) {
         this.valorTotal = valorTotal;
+    }
+
+    public Double getFrete() {
+        return frete;
+    }
+
+    public void setFrete(Double frete) {
+        this.frete = frete;
     }
 
     public Boolean getVisivel() {

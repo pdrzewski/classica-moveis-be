@@ -124,9 +124,18 @@ public class MovimentacaoService {
         }
 
         // Calcular valor total
-        double valorTotal = requestDto.getItens().stream()
+        double valorProdutos = requestDto.getItens().stream()
                 .mapToDouble(ItemMovimentacaoRequestDto::getSubtotal)
                 .sum();
+
+        double frete = requestDto.getFrete() != null
+                ? requestDto.getFrete()
+                : 0.0;
+
+        mov.setFrete(frete);
+
+        double valorTotal = valorProdutos + frete;
+
         mov.setValorTotal(valorTotal);
 
         if (requestDto.getPagamentos() != null) {
@@ -307,12 +316,35 @@ public class MovimentacaoService {
                 );
             }
 
-            double valorTotalVenda = 0.0;
+        if (dto.getFrete() == null) {
+            throw new IllegalArgumentException(
+                    "O frete é obrigatório para vendas"
+            );
+        }
 
-            for (ItemMovimentacaoRequestDto item : dto.getItens()) {
+        if (dto.getFrete() < 0) {
+            throw new IllegalArgumentException(
+                    "O frete não pode ser negativo"
+            );
+        }
 
-                valorTotalVenda += item.getSubtotal();
-            }
+        double valorTotalVenda = 0.0;
+
+        for (ItemMovimentacaoRequestDto item : dto.getItens()) {
+            valorTotalVenda += item.getSubtotal();
+        }
+
+        double frete = dto.getFrete() != null
+                ? dto.getFrete()
+                : 0.0;
+
+        if (frete < 0) {
+            throw new IllegalArgumentException(
+                    "O frete não pode ser negativo"
+            );
+        }
+
+        valorTotalVenda += frete;
 
             double valorTotalPagamentos = 0.0;
 
