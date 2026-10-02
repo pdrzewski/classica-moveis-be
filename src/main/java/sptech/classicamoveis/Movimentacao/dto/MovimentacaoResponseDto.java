@@ -43,6 +43,9 @@ public class MovimentacaoResponseDto {
     @Schema(example = "3149.80")
     private Double valorTotal;
 
+    @Schema(example = "150.00")
+    private Double frete;
+
     @Schema(example = "5")
     private Integer colaboradorId;
 

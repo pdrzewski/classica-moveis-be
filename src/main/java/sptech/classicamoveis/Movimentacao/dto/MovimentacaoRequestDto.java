@@ -26,6 +26,9 @@ public class MovimentacaoRequestDto {
     @Schema(example = "Venda balcão - cliente retirou na loja")
     private String observacao;
 
+    @Schema(example = "150.00")
+    private Double frete;
+
     @Schema(description = "Estabelecimento de onde os itens saem", example = "1")
     private Integer estabelecimentoOrigemId;
 

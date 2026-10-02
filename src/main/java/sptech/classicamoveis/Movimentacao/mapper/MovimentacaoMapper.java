@@ -33,6 +33,7 @@ public class MovimentacaoMapper {
 
         dto.setObservacao(movimentacao.getObservacao());
         dto.setValorTotal(movimentacao.getValorTotal());
+        dto.setFrete(movimentacao.getFrete());
 
         if (movimentacao.getPagamentos() != null) {
 
