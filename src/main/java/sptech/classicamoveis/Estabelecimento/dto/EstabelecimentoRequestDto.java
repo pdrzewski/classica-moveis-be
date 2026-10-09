@@ -22,6 +22,13 @@ public class EstabelecimentoRequestDto {
     private String telefone;
     @Schema(example = "1")
     private Integer responsavelId;
+    private String cep;
+    private String logradouro;
+    private String bairro;
+    private String cidade;
+    private String numero;
+    private String complemento;
+    private String estado;
 
     public String getNome() { return nome; }
 }

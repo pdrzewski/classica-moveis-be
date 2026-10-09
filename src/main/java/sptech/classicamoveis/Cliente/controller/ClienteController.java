@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import sptech.classicamoveis.Cliente.Cliente;
 import sptech.classicamoveis.Cliente.dto.ClienteResponseDto;
+import jakarta.validation.Valid;
 import sptech.classicamoveis.Cliente.dto.ClienteComEnderecoRequestDto;
 import sptech.classicamoveis.Cliente.service.ClienteService;
 
@@ -42,7 +42,7 @@ public class ClienteController {
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<ClienteResponseDto> criarCliente(@RequestBody ClienteComEnderecoRequestDto requestDto) {
+    public ResponseEntity<ClienteResponseDto> criarCliente(@Valid @RequestBody ClienteComEnderecoRequestDto requestDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.criarCliente(requestDto));
     }
 
@@ -55,8 +55,9 @@ public class ClienteController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Cliente> atualizarCliente(@PathVariable Integer id, @RequestBody Cliente clienteAtualizado) {
-        return ResponseEntity.ok(clienteService.atualizarCliente(id, clienteAtualizado));
+    public ResponseEntity<ClienteResponseDto> atualizarCliente(@PathVariable Integer id,
+            @Valid @RequestBody ClienteComEnderecoRequestDto requestDto) {
+        return ResponseEntity.ok(clienteService.atualizarCliente(id, requestDto));
     }
 
     @GetMapping("/documento/{documento}")

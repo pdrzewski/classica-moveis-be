@@ -45,7 +45,7 @@ public class FornecedorServiceImpl implements FornecedorService {
     @Override
     public FornecedorResponseDTO criar(FornecedorComEnderecoRequestDTO dto) {
         Endereco endereco = new Endereco();
-        endereco.setCep(dto.cep());
+        endereco.setCep(normalizarCep(dto.cep()));
         endereco.setLogradouro(dto.logradouro());
         endereco.setBairro(dto.bairro());
         endereco.setCidade(dto.cidade());
@@ -61,7 +61,23 @@ public class FornecedorServiceImpl implements FornecedorService {
     @Override
     public FornecedorResponseDTO atualizar(Long id, FornecedorRequestDTO dto) {
         Fornecedor fornecedor = buscarEntidadePorId(id);
-        Endereco endereco = enderecoService.buscarEntidadePorId(dto.enderecoId());
+        Endereco endereco;
+        if (dto.cep() != null || dto.logradouro() != null || dto.bairro() != null
+                || dto.cidade() != null || dto.numero() != null || dto.estado() != null) {
+            endereco = fornecedor.getEndereco();
+            if (dto.cep() != null) endereco.setCep(normalizarCep(dto.cep()));
+            if (dto.logradouro() != null) endereco.setLogradouro(dto.logradouro());
+            if (dto.bairro() != null) endereco.setBairro(dto.bairro());
+            if (dto.cidade() != null) endereco.setCidade(dto.cidade());
+            if (dto.numero() != null) endereco.setNumero(dto.numero());
+            if (dto.complemento() != null) endereco.setComplemento(dto.complemento());
+            if (dto.estado() != null) endereco.setEstado(dto.estado());
+            enderecoRepository.save(endereco);
+        } else if (dto.enderecoId() != null) {
+            endereco = enderecoService.buscarEntidadePorId(dto.enderecoId());
+        } else {
+            endereco = fornecedor.getEndereco();
+        }
         fornecedorMapper.updateEntityFromDto(dto, endereco, fornecedor);
         return fornecedorMapper.toResponseDTO(fornecedorRepository.save(fornecedor));
     }
@@ -70,6 +86,13 @@ public class FornecedorServiceImpl implements FornecedorService {
     public void deletar(Long id) {
         Fornecedor fornecedor = buscarEntidadePorId(id);
         fornecedorRepository.delete(fornecedor);
+    }
+
+    private String normalizarCep(String cep) {
+        if (cep == null) return null;
+        String numeros = cep.replaceAll("\\D", "");
+        if (numeros.length() != 8) throw new IllegalArgumentException("CEP deve conter 8 números.");
+        return numeros;
     }
 
     private Fornecedor buscarEntidadePorId(Long id) {
