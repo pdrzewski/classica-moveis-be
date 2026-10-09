@@ -3,6 +3,7 @@ package sptech.classicamoveis.Estabelecimento.service;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sptech.classicamoveis.Colaborador.model.Colaborador;
 import sptech.classicamoveis.Colaborador.repository.ColaboradorRepository;
 import sptech.classicamoveis.Endereco.Endereco;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class EstabelecimentoService {
 
     private final EstabelecimentoRepository estabelecimentoRepository;
@@ -41,7 +43,7 @@ public class EstabelecimentoService {
 
     public EstabelecimentoResponseDto criar(EstabelecimentoComEnderecoRequestDto dto) {
         Endereco endereco = new Endereco();
-        endereco.setCep(dto.getCep());
+        endereco.setCep(normalizarCep(dto.getCep()));
         endereco.setLogradouro(dto.getLogradouro());
         endereco.setBairro(dto.getBairro());
         endereco.setCidade(dto.getCidade());
@@ -79,6 +81,13 @@ public class EstabelecimentoService {
                 .orElseThrow(() -> new EntityNotFoundException("Estabelecimento não encontrado com id: " + id));
     }
 
+    private String normalizarCep(String cep) {
+        if (cep == null) return null;
+        String numeros = cep.replaceAll("\\D", "");
+        if (numeros.length() != 8) throw new IllegalArgumentException("CEP deve conter 8 números.");
+        return numeros;
+    }
+
     private void preencherEntidade(Estabelecimento estabelecimento, EstabelecimentoRequestDto dto) {
         if (dto == null) {
             throw new IllegalArgumentException("Dados do estabelecimento são obrigatórios.");
@@ -87,8 +96,24 @@ public class EstabelecimentoService {
         estabelecimento.setCnpj(dto.getCnpj());
         estabelecimento.setTelefone(dto.getTelefone());
 
-        Endereco endereco = enderecoRepository.findById(dto.getEnderecoId())
-                .orElseThrow(() -> new EntityNotFoundException("Endereço não encontrado com id: " + dto.getEnderecoId()));
+        Endereco endereco;
+        if (dto.getCep() != null || dto.getLogradouro() != null || dto.getBairro() != null
+                || dto.getCidade() != null || dto.getNumero() != null || dto.getEstado() != null) {
+            endereco = estabelecimento.getEndereco();
+            if (dto.getCep() != null) endereco.setCep(normalizarCep(dto.getCep()));
+            if (dto.getLogradouro() != null) endereco.setLogradouro(dto.getLogradouro());
+            if (dto.getBairro() != null) endereco.setBairro(dto.getBairro());
+            if (dto.getCidade() != null) endereco.setCidade(dto.getCidade());
+            if (dto.getNumero() != null) endereco.setNumero(dto.getNumero());
+            if (dto.getComplemento() != null) endereco.setComplemento(dto.getComplemento());
+            if (dto.getEstado() != null) endereco.setEstado(dto.getEstado());
+            enderecoRepository.save(endereco);
+        } else if (dto.getEnderecoId() != null) {
+            endereco = enderecoRepository.findById(dto.getEnderecoId())
+                    .orElseThrow(() -> new EntityNotFoundException("Endereço não encontrado com id: " + dto.getEnderecoId()));
+        } else {
+            endereco = estabelecimento.getEndereco();
+        }
         estabelecimento.setEndereco(endereco);
 
         Colaborador responsavel = colaboradorRepository.findById(dto.getResponsavelId())

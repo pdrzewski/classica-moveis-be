@@ -22,6 +22,9 @@ public class ItemMovimentacaoRequestDto {
     private Double desconto;
 
     public Double getSubtotal() {
+        if (quantidade == null || valorUnitario == null) {
+            throw new IllegalArgumentException("Quantidade e valor unitário são obrigatórios em cada item.");
+        }
         return (quantidade * valorUnitario) - (desconto != null ? desconto : 0);
     }
 }

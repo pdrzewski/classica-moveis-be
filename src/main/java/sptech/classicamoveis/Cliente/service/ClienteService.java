@@ -2,6 +2,7 @@ package sptech.classicamoveis.Cliente.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import sptech.classicamoveis.Cliente.Cliente;
 import sptech.classicamoveis.Cliente.Mapper.ClienteMapper;
 import sptech.classicamoveis.Cliente.dto.ClienteResponseDto;
@@ -13,6 +14,7 @@ import sptech.classicamoveis.Endereco.repository.EnderecoRepository;
 import java.util.List;
 
 @Service
+@Transactional
 public class ClienteService {
 
     private final ClienteRepository repository;
@@ -31,7 +33,7 @@ public class ClienteService {
 
     public ClienteResponseDto criarCliente(ClienteComEnderecoRequestDto requestDto) {
         Endereco endereco = new Endereco();
-        endereco.setCep(requestDto.getCep());
+        endereco.setCep(normalizarCep(requestDto.getCep()));
         endereco.setLogradouro(requestDto.getLogradouro());
         endereco.setBairro(requestDto.getBairro());
         endereco.setCidade(requestDto.getCidade());
@@ -55,24 +57,41 @@ public class ClienteService {
     }
 
     public ClienteResponseDto buscarClientePorId(Integer id) {
-        Cliente cliente = repository.findById(id).orElse(null);
-        if (cliente != null) {
-            return new ClienteMapper().toResponseDto(cliente);
-        }
-        return null;
+        Cliente cliente = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com id: " + id));
+        return new ClienteMapper().toResponseDto(cliente);
     }
 
-    public Cliente atualizarCliente(Integer id, Cliente clienteAtualizado) {
-        Cliente clienteaAtualizar = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
-            clienteaAtualizar.setNome(clienteAtualizado.getNome());
-            clienteaAtualizar.setEnderecoId(clienteAtualizado.getEnderecoId());
-            clienteaAtualizar.setDocumento(clienteAtualizado.getDocumento());
-            clienteaAtualizar.setTelefone1(clienteAtualizado.getTelefone1());
-            clienteaAtualizar.setTelefone2(clienteAtualizado.getTelefone2());
-            clienteaAtualizar.setEmail(clienteAtualizado.getEmail());
-            clienteaAtualizar.setObservacao(clienteAtualizado.getObservacao());
-            clienteaAtualizar.setIe(clienteAtualizado.getIe());
-            return repository.save(clienteaAtualizar);
+    public ClienteResponseDto atualizarCliente(Integer id, ClienteComEnderecoRequestDto dto) {
+        Cliente cliente = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado com id: " + id));
+
+        cliente.setNome(dto.getNome());
+        cliente.setDocumento(dto.getDocumento());
+        cliente.setTelefone1(dto.getTelefone1());
+        cliente.setTelefone2(dto.getTelefone2());
+        cliente.setEmail(dto.getEmail());
+        cliente.setObservacao(dto.getObservacao());
+        cliente.setIe(dto.getIe());
+
+        Endereco endereco = cliente.getEndereco();
+        endereco.setCep(normalizarCep(dto.getCep()));
+        endereco.setLogradouro(dto.getLogradouro());
+        endereco.setBairro(dto.getBairro());
+        endereco.setCidade(dto.getCidade());
+        endereco.setNumero(dto.getNumero());
+        endereco.setComplemento(dto.getComplemento());
+        endereco.setEstado(dto.getEstado());
+        enderecoRepository.save(endereco);
+
+        return new ClienteMapper().toResponseDto(repository.save(cliente));
+    }
+
+    private String normalizarCep(String cep) {
+        if (cep == null) return null;
+        String numeros = cep.replaceAll("\\D", "");
+        if (numeros.length() != 8) throw new IllegalArgumentException("CEP deve conter 8 números.");
+        return numeros;
     }
 
     public void deletarCliente(Integer id) {

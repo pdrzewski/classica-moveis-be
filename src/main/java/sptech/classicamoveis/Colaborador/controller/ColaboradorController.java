@@ -1,6 +1,7 @@
 package sptech.classicamoveis.Colaborador.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -37,12 +38,12 @@ public class ColaboradorController {
     }
 
     @PostMapping
-    public ResponseEntity<ColaboradorResponseDto> criar(@RequestBody ColaboradorRequestDto dto) {
+    public ResponseEntity<ColaboradorResponseDto> criar(@Valid @RequestBody ColaboradorRequestDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(colaboradorService.criar(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ColaboradorResponseDto> atualizar(@PathVariable Integer id, @RequestBody ColaboradorRequestDto dto) {
+    public ResponseEntity<ColaboradorResponseDto> atualizar(@PathVariable Integer id, @Valid @RequestBody ColaboradorRequestDto dto) {
         return ResponseEntity.ok(colaboradorService.atualizar(id, dto));
     }
 

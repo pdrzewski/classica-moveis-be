@@ -17,6 +17,9 @@ import sptech.classicamoveis.Estabelecimento.Estabelecimento;
 import sptech.classicamoveis.Estabelecimento.repository.EstabelecimentoRepository;
 import sptech.classicamoveis.Usuario.model.Usuario;
 import sptech.classicamoveis.Usuario.repository.UsuarioRepository;
+import jakarta.persistence.EntityExistsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -34,6 +37,7 @@ public class ColaboradorService {
     private final UsuarioRepository usuarioRepository;
     private final EstabelecimentoRepository estabelecimentoRepository;
     private final EnderecoRepository enderecoRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public List<ColaboradorResponseDto> listarTodos() {
         return colaboradorRepository.findAll().stream()
@@ -45,19 +49,54 @@ public class ColaboradorService {
         return toResponseDTO(buscarEntidadePorId(id));
     }
 
+    @Transactional
     public ColaboradorResponseDto criar(ColaboradorRequestDto dto) {
+
         validarDuplicidade(dto);
 
+        usuarioRepository.findByLogin(dto.usuario().login()).ifPresent(usuarioExistente -> {
+            throw new IllegalArgumentException(
+                    "Já existe um usuário com o login: " + dto.usuario().login()
+            );
+        });
+
+        Usuario usuario = new Usuario();
+        usuario.setLogin(dto.usuario().login());
+        usuario.setSenha(passwordEncoder.encode(dto.usuario().senha()));
+
+        usuario = usuarioRepository.save(usuario);
+
         Colaborador colaborador = new Colaborador();
-        preencherEntidade(colaborador, dto);
-        return toResponseDTO(colaboradorRepository.save(colaborador));
+        preencherEntidade(colaborador, dto, usuario);
+
+        colaborador = colaboradorRepository.save(colaborador);
+
+        return toResponseDTO(colaborador);
     }
 
+    @Transactional
     public ColaboradorResponseDto atualizar(Integer id, ColaboradorRequestDto dto) {
+
         Colaborador colaborador = buscarEntidadePorId(id);
+
         validarDuplicidade(dto, id);
-        preencherEntidade(colaborador, dto);
-        return toResponseDTO(colaboradorRepository.save(colaborador));
+
+        Usuario usuario;
+
+        if (dto.usuarioId() != null) {
+            usuario = usuarioRepository.findById(dto.usuarioId())
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            "Usuário não encontrado com id: " + dto.usuarioId()
+                    ));
+        } else {
+            usuario = colaborador.getUsuario();
+        }
+
+        preencherEntidade(colaborador, dto, usuario);
+
+        colaborador = colaboradorRepository.save(colaborador);
+
+        return toResponseDTO(colaborador);
     }
 
     public void deletar(Integer id) {
@@ -129,20 +168,34 @@ public class ColaboradorService {
     }
 
 
-    private void preencherEntidade(Colaborador colaborador, ColaboradorRequestDto dto) {
+
+    private void preencherEntidade(
+            Colaborador colaborador,
+            ColaboradorRequestDto dto,
+            Usuario usuario
+    ) {
         Cargo cargo = cargoRepository.findById(dto.cargoId())
-                .orElseThrow(() -> new EntityNotFoundException("Cargo não encontrado com id: " + dto.cargoId()));
-        Usuario usuario = usuarioRepository.findById(dto.usuarioId())
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com id: " + dto.usuarioId()));
-        Estabelecimento estabelecimento = dto.estabelecimentoId() == null ? null :
-                estabelecimentoRepository.findById(dto.estabelecimentoId())
-                        .orElseThrow(() -> new EntityNotFoundException("Estabelecimento não encontrado com id: " + dto.estabelecimentoId()));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Cargo não encontrado com id: " + dto.cargoId()
+                ));
+
+        Estabelecimento estabelecimento =
+                dto.estabelecimentoId() == null ? null :
+                        estabelecimentoRepository.findById(dto.estabelecimentoId())
+                                .orElseThrow(() -> new EntityNotFoundException(
+                                        "Estabelecimento não encontrado com id: "
+                                                + dto.estabelecimentoId()
+                                ));
 
         colaborador.setNome(dto.nome());
         colaborador.setCargo(cargo);
         colaborador.setUsuario(usuario);
         colaborador.setEstabelecimento(estabelecimento);
-        colaborador.setEmFerias(dto.emFerias() != null ? dto.emFerias() : false);
+
+        colaborador.setEmFerias(
+                dto.emFerias() != null ? dto.emFerias() : false
+        );
+
         colaborador.setDataAdmissao(dto.dataAdmissao());
         colaborador.setDataNascimento(dto.dataNascimento());
         colaborador.setSalario(dto.salario());
@@ -155,9 +208,12 @@ public class ColaboradorService {
         Endereco endereco = dto.enderecoId() == null ? null :
                 enderecoRepository.findById(dto.enderecoId())
                         .orElseThrow(() -> new EntityNotFoundException(
-                                "Endereço não encontrado com id: " + dto.enderecoId()));
+                                "Endereço não encontrado com id: " + dto.enderecoId()
+                        ));
+
         colaborador.setEndereco(endereco);
     }
+
 
     private void validarDuplicidade(ColaboradorRequestDto dto) {
         validarDuplicidade(dto, null);

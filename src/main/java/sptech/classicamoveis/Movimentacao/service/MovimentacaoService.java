@@ -275,6 +275,9 @@ public class MovimentacaoService {
     }
 
     private void validarMovimentacao(MovimentacaoRequestDto dto) {
+        if (dto == null || dto.getTipoMovimentacao() == null) {
+            throw new IllegalArgumentException("O tipo da movimentação é obrigatório.");
+        }
         if (dto.getItens() == null || dto.getItens().isEmpty()) {
             throw new IllegalArgumentException("A movimentação deve conter pelo menos um item");
         }
@@ -286,6 +289,15 @@ public class MovimentacaoService {
 
             if (item.getQuantidade() == null || item.getQuantidade() <= 0) {
                 throw new IllegalArgumentException("A quantidade de cada item deve ser maior que zero");
+            }
+            if (item.getValorUnitario() == null || item.getValorUnitario() < 0) {
+                throw new IllegalArgumentException("O valor unitário deve ser informado e não pode ser negativo.");
+            }
+            if (item.getDesconto() != null && item.getDesconto() < 0) {
+                throw new IllegalArgumentException("O desconto não pode ser negativo.");
+            }
+            if (item.getDesconto() != null && item.getDesconto() > item.getQuantidade() * item.getValorUnitario()) {
+                throw new IllegalArgumentException("O desconto não pode ser maior que o valor do item.");
             }
         }
 

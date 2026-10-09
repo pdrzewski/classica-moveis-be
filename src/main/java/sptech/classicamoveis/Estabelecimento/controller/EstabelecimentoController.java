@@ -1,6 +1,7 @@
 package sptech.classicamoveis.Estabelecimento.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,12 +32,12 @@ public class EstabelecimentoController {
     }
 
     @PostMapping
-    public ResponseEntity<EstabelecimentoResponseDto> criar(@RequestBody EstabelecimentoComEnderecoRequestDto dto) {
+    public ResponseEntity<EstabelecimentoResponseDto> criar(@Valid @RequestBody EstabelecimentoComEnderecoRequestDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(estabelecimentoService.criar(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EstabelecimentoResponseDto> atualizar(@PathVariable Integer id, @RequestBody EstabelecimentoRequestDto dto) {
+    public ResponseEntity<EstabelecimentoResponseDto> atualizar(@PathVariable Integer id, @Valid @RequestBody EstabelecimentoRequestDto dto) {
         return ResponseEntity.ok(estabelecimentoService.atualizar(id, dto));
     }
 

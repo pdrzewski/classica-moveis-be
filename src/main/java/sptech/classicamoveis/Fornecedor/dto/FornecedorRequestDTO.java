@@ -34,9 +34,16 @@ public record FornecedorRequestDTO(
         @Schema(example = "contato@rufato.com.br")
         String email,
 
-        @NotNull(message = "O id do endereço é obrigatório")
-        @Schema(example = "22")
-        Integer enderecoId
+        @Schema(example = "22", description = "ID do endereço existente; opcional quando enviados os campos do endereço")
+        Integer enderecoId,
+
+        @Size(max = 9, message = "CEP deve ter no máximo 9 caracteres") String cep,
+        @Size(max = 100, message = "Logradouro deve ter no máximo 100 caracteres") String logradouro,
+        @Size(max = 45, message = "Bairro deve ter no máximo 45 caracteres") String bairro,
+        @Size(max = 45, message = "Cidade deve ter no máximo 45 caracteres") String cidade,
+        @Size(max = 45, message = "Número deve ter no máximo 45 caracteres") String numero,
+        @Size(max = 45, message = "Complemento deve ter no máximo 45 caracteres") String complemento,
+        @Size(max = 2, message = "Estado deve ter 2 caracteres") String estado
 
 ) {
 }
