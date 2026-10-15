@@ -170,7 +170,7 @@ class EstabelecimentoServiceTest {
                   "123",
                   "119",
                   5,
-                  "01000",
+                  "01000-000",
                   "Rua",
                   "Centro",
                   "SP",
@@ -296,13 +296,7 @@ class EstabelecimentoServiceTest {
           );
 
   EstabelecimentoRequestDto dto =
-          new EstabelecimentoRequestDto(
-                  "Nova",
-                  2,
-                  "cnpj",
-                  "tel",
-                  3
-          );
+          new EstabelecimentoRequestDto("Nova", 2, "cnpj", "tel", 3, null, null, null, null, null, null, null);
 
   when(repository.findById(1))
           .thenReturn(Optional.of(estabelecimento));
@@ -361,13 +355,7 @@ class EstabelecimentoServiceTest {
           .thenReturn(Optional.empty());
 
   EstabelecimentoRequestDto dto =
-          new EstabelecimentoRequestDto(
-                  "Nova",
-                  2,
-                  "cnpj",
-                  "tel",
-                  3
-          );
+          new EstabelecimentoRequestDto("Nova", 2, "cnpj", "tel", 3, null, null, null, null, null, null, null);
 
   assertThrows(
           EntityNotFoundException.class,
@@ -392,13 +380,7 @@ class EstabelecimentoServiceTest {
           .thenReturn(Optional.empty());
 
   EstabelecimentoRequestDto dto =
-          new EstabelecimentoRequestDto(
-                  "Nova",
-                  2,
-                  "c",
-                  "t",
-                  3
-          );
+          new EstabelecimentoRequestDto("Nova", 2, "cnpj", "tel", 3, null, null, null, null, null, null, null);
 
   assertThrows(
           EntityNotFoundException.class,
@@ -426,13 +408,7 @@ class EstabelecimentoServiceTest {
           .thenReturn(Optional.empty());
 
   EstabelecimentoRequestDto dto =
-          new EstabelecimentoRequestDto(
-                  "Nova",
-                  2,
-                  "c",
-                  "t",
-                  3
-          );
+          new EstabelecimentoRequestDto("Nova", 2, "cnpj", "tel", 3, null, null, null, null, null, null, null);
 
   assertThrows(
           EntityNotFoundException.class,

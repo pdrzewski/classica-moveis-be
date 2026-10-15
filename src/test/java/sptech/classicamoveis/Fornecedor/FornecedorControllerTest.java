@@ -27,7 +27,7 @@ class FornecedorControllerTest {
     FornecedorController controller;
 
     private FornecedorResponseDTO criarDTO(long id, String nome) {
-        return new FornecedorResponseDTO(id, nome, "12.345.678/0001-99", "Representante", "1133334444", "fornecedor@email.com", null);
+        return new FornecedorResponseDTO(id, nome, "12345678000199", "1133334444", "1144445555", "11999999999", "fornecedor@email.com", null);
     }
 
     @Test
@@ -57,7 +57,7 @@ class FornecedorControllerTest {
     @Test
     void criar() {
         FornecedorComEnderecoRequestDTO dto = new FornecedorComEnderecoRequestDTO(
-            "Novo Fornecedor", "98765432000188", "Representante", "1144445555", null,
+            "Novo Fornecedor", "98765432000188", "1144445555", null, "11999999999", "contato@fornecedor.com",
             "01310100", "Rua B", "Bairro", "São Paulo", "200", null, "SP"
         );
 
@@ -74,7 +74,8 @@ class FornecedorControllerTest {
     @Test
     void atualizar() {
         FornecedorRequestDTO dto = new FornecedorRequestDTO(
-            "Fornecedor A Atualizado", "12345678000199", "Representante", "1133334444", null, 1
+            "Fornecedor A Atualizado", "12345678000199", "1133334444", null, "11999999999", "atualizado@fornecedor.com",
+            1, null, null, null, null, null, null, null
         );
 
         when(fornecedorService.atualizar(anyLong(), any()))

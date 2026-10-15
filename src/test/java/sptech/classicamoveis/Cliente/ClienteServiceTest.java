@@ -29,17 +29,26 @@ class ClienteServiceTest {
     }
     @Test void listar(){when(repository.findAll()).thenReturn(List.of(cliente(1,"Ana","111")));assertEquals("Ana",service.listarClientes().get(0).getNome());}
     @Test void buscarExistente(){when(repository.findById(1)).thenReturn(Optional.of(cliente(1,"Ana","111")));assertEquals("Ana",service.buscarClientePorId(1).getNome());}
-    @Test void buscarInexistenteRetornaNull(){when(repository.findById(9)).thenReturn(Optional.empty());assertNull(service.buscarClientePorId(9));}
+    @Test void buscarInexistenteLancaExcecao(){when(repository.findById(9)).thenReturn(Optional.empty());assertThrows(EntityNotFoundException.class, () -> service.buscarClientePorId(9));}
     @Test void criar(){
-        ClienteComEnderecoRequestDto d=new ClienteComEnderecoRequestDto("Ana","111","119","118","a@a.com","obs","IE","01000","Rua","Centro","SP","10",null,"SP");
+        ClienteComEnderecoRequestDto d=new ClienteComEnderecoRequestDto("Ana","111","119","118","a@a.com","obs","IE","01000-000","Rua","Centro","SP","10",null,"SP");
         Endereco e=new Endereco(); e.setId(7); when(enderecoRepository.save(any())).thenReturn(e); when(repository.save(any())).thenAnswer(i->{Cliente c=i.getArgument(0);c.setId(1);return c;});
         var r=service.criarCliente(d); assertEquals("Ana",r.getNome()); verify(enderecoRepository).save(any(Endereco.class)); verify(repository).save(any(Cliente.class));
     }
     @Test void atualizar(){
-        Cliente atual=cliente(1,"Old","1"); Cliente novo=cliente(2,"New","2"); when(repository.findById(1)).thenReturn(Optional.of(atual)); when(repository.save(atual)).thenReturn(atual);
-        assertEquals("New",service.atualizarCliente(1,novo).getNome()); verify(repository).save(atual);
+        Cliente atual=cliente(1,"Old","1");
+        ClienteComEnderecoRequestDto novo=new ClienteComEnderecoRequestDto(
+                "New","2","11999999999","11888888888","new@a.com","obs nova","IE nova",
+                "01000-000","Rua Nova","Centro","São Paulo","20",null,"SP");
+        when(repository.findById(1)).thenReturn(Optional.of(atual));
+        when(repository.save(atual)).thenReturn(atual);
+        when(enderecoRepository.save(any(Endereco.class))).thenAnswer(i -> i.getArgument(0));
+
+        assertEquals("New",service.atualizarCliente(1,novo).getNome());
+        verify(enderecoRepository).save(atual.getEndereco());
+        verify(repository).save(atual);
     }
-    @Test void atualizarInexistente(){when(repository.findById(9)).thenReturn(Optional.empty());assertThrows(EntityNotFoundException.class,()->service.atualizarCliente(9,cliente(1,"x","x")));}
+    @Test void atualizarInexistente(){when(repository.findById(9)).thenReturn(Optional.empty());assertThrows(EntityNotFoundException.class,()->service.atualizarCliente(9,new ClienteComEnderecoRequestDto()));}
     @Test void deletar(){Cliente c=cliente(1,"Ana","1");when(repository.findById(1)).thenReturn(Optional.of(c));service.deletarCliente(1);verify(repository).delete(c);}
     @Test void deletarInexistente(){when(repository.findById(9)).thenReturn(Optional.empty());assertThrows(EntityNotFoundException.class,()->service.deletarCliente(9));}
     @Test void buscarNome(){when(repository.findByNomeContainingIgnoreCase("ana")).thenReturn(List.of(cliente(1,"Ana","1")));assertEquals(1,service.buscarClientesPorNome("ana").size());}

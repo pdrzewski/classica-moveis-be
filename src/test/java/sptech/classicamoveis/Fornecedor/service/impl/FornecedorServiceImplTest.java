@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class FornecedorServiceImplTest {
  @Mock FornecedorRepository repository; @Mock FornecedorMapper mapper; @Mock EnderecoService enderecoService; @InjectMocks FornecedorServiceImpl service;
- private Fornecedor fornecedor(long id){Fornecedor f=new Fornecedor();f.setId(id);f.setNome("Madeira");return f;} private FornecedorRequestDTO dto(){return new FornecedorRequestDTO("Madeira","1","João","1","2",3);} private FornecedorResponseDTO resposta(){return new FornecedorResponseDTO(1L,"Madeira","1","João","1","2",null);}
+ private Fornecedor fornecedor(long id){Fornecedor f=new Fornecedor();f.setId(id);f.setNome("Madeira");return f;} private FornecedorRequestDTO dto(){return new FornecedorRequestDTO("Madeira","1","11111111111","22222222222","33333333333","madeira@teste.com",3,null,null,null,null,null,null,null);} private FornecedorResponseDTO resposta(){return new FornecedorResponseDTO(1L,"Madeira","1","11111111111","22222222222","33333333333","madeira@teste.com",null);}
   @Test void listaFornecedores(){when(repository.findAll()).thenReturn(List.of(fornecedor(1)));when(mapper.toResponseDTO(any())).thenReturn(resposta());assertEquals(1,service.listarTodos().size());}
   @Test void buscaFornecedor(){Fornecedor f=fornecedor(1);when(repository.findById(1L)).thenReturn(Optional.of(f));when(mapper.toResponseDTO(f)).thenReturn(resposta());assertEquals("Madeira",service.buscarPorId(1L).nome());}
   @Test void falhaAoBuscarFornecedorAusente(){when(repository.findById(8L)).thenReturn(Optional.empty());assertThrows(EntityNotFoundException.class,()->service.buscarPorId(8L));}

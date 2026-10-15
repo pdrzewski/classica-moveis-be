@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ProdutoServiceImplTest {
  @Mock ProdutoRepository repository; @Mock FornecedorRepository fornecedorRepository; @Mock CategoriaRepository categoriaRepository; @Mock ProdutoMapper mapper; @InjectMocks ProdutoServiceImpl service;
- private ProdutoRequestDTO dto(){return new ProdutoRequestDTO(2L,3,"Mesa","SKU","BAR","UN","Marca",10.0,20.0,1,true);} private Produto produto(){Produto p=new Produto();p.setId(1);return p;} private ProdutoResponseDTO response(){return new ProdutoResponseDTO(1,2L,3,"Mesa","SKU","BAR","UN","Marca",10.0,20.0,1,true);}
+ private ProdutoRequestDTO dto(){return new ProdutoRequestDTO(2L,3,"Mesa","SKU","BAR","94036000","5102","UN","Marca",10.0,20.0,1,true);} private Produto produto(){Produto p=new Produto();p.setId(1);return p;} private ProdutoResponseDTO response(){return new ProdutoResponseDTO(1,"Fornecedor", "Categoria","Mesa","SKU","BAR","94036000","5102","UN","Marca",10.0,20.0,1,true);}
  @Test void listaProdutos(){Produto p=produto();when(repository.findAll()).thenReturn(List.of(p));when(mapper.toResponseDTO(p)).thenReturn(response());assertEquals(1,service.listarTodos().size());}
  @Test void buscaProduto(){Produto p=produto();when(repository.findById(1)).thenReturn(Optional.of(p));when(mapper.toResponseDTO(p)).thenReturn(response());assertEquals("Mesa",service.buscarPorId(1).nome());}
  @Test void falhaAoBuscarProdutoAusente(){when(repository.findById(1)).thenReturn(Optional.empty());assertThrows(RecursoNaoEncontradoException.class,()->service.buscarPorId(1));}
