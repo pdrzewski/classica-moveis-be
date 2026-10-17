@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import sptech.classicamoveis.Usuario.dto.UsuarioRequestDto;
 import sptech.classicamoveis.Usuario.dto.UsuarioResponseDto;
 import sptech.classicamoveis.Usuario.service.UsuarioService;
+import sptech.classicamoveis.Jwt.service.AuthorizationService;
 
 import java.util.List;
 
@@ -21,6 +22,8 @@ import static org.mockito.Mockito.*;
 class UsuarioControllerTest {
     @Mock
     UsuarioService usuarioService;
+    @Mock
+    AuthorizationService authorizationService;
     @InjectMocks
     UsuarioController controller;
 
@@ -42,6 +45,7 @@ class UsuarioControllerTest {
 
     @Test
     void buscarPorId() {
+        when(authorizationService.podeAcessarUsuario(1)).thenReturn(true);
         when(usuarioService.buscarPorId(1))
                 .thenReturn(criarDTO(1, "user1"));
 

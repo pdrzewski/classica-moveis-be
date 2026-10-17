@@ -26,7 +26,7 @@ class ProdutoControllerTest {
     ProdutoController controller;
 
     private ProdutoResponseDTO criarDTO(int id, String nome) {
-        return new ProdutoResponseDTO(id, 1L, 1, nome, "SKU", "12345", "UN", "MARCA", 50.0, 100.0, 10, true);
+        return new ProdutoResponseDTO(id, "Fornecedor", "Categoria", nome, "SKU", "12345678", "94036000", "5102", "UN", "MARCA", 50.0, 100.0, 10, true);
     }
 
     @Test
@@ -78,7 +78,7 @@ class ProdutoControllerTest {
 
     @Test
     void criar() {
-        ProdutoRequestDTO dto = new ProdutoRequestDTO(1L, 1, "Poltrona", "SKU", "12345", "UN", "MARCA", 75.0, 150.0, 5, true);
+        ProdutoRequestDTO dto = new ProdutoRequestDTO(1L, 1, "Poltrona", "SKU", "12345678", "94036000", "5102", "UN", "MARCA", 75.0, 150.0, 5, true);
         when(produtoService.criar(any()))
                 .thenReturn(criarDTO(3, "Poltrona"));
 
@@ -91,7 +91,7 @@ class ProdutoControllerTest {
 
     @Test
     void atualizar() {
-        ProdutoRequestDTO dto = new ProdutoRequestDTO(1L, 1, "Cadeira de Madeira", "SKU", "12345", "UN", "MARCA", 60.0, 120.0, 15, true);
+        ProdutoRequestDTO dto = new ProdutoRequestDTO(1L, 1, "Cadeira de Madeira", "SKU", "12345678", "94036000", "5102", "UN", "MARCA", 60.0, 120.0, 15, true);
         when(produtoService.atualizar(eq(1), any()))
                 .thenReturn(criarDTO(1, "Cadeira de Madeira"));
 

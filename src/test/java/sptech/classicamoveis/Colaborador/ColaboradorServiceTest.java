@@ -15,6 +15,10 @@ import sptech.classicamoveis.Colaborador.model.Colaborador;
 import sptech.classicamoveis.Colaborador.repository.ColaboradorRepository;
 import sptech.classicamoveis.Colaborador.service.ColaboradorService;
 import sptech.classicamoveis.Estabelecimento.Estabelecimento;
+import sptech.classicamoveis.Estabelecimento.repository.EstabelecimentoRepository;
+import sptech.classicamoveis.Endereco.repository.EnderecoRepository;
+import sptech.classicamoveis.Usuario.dto.UsuarioRequestDto;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import sptech.classicamoveis.Usuario.model.Usuario;
 import sptech.classicamoveis.Usuario.repository.UsuarioRepository;
 
@@ -37,6 +41,15 @@ class ColaboradorServiceTest {
 
  @Mock
  UsuarioRepository usuarioRepository;
+
+ @Mock
+ EstabelecimentoRepository estabelecimentoRepository;
+
+ @Mock
+ EnderecoRepository enderecoRepository;
+
+ @Mock
+ PasswordEncoder passwordEncoder;
 
  @InjectMocks
  ColaboradorService service;
@@ -107,21 +120,31 @@ class ColaboradorServiceTest {
  }
 
  private ColaboradorRequestDto dto(Boolean ferias) {
-
   return new ColaboradorRequestDto(
-          "Ana",
-          2,
-          3,
-          ferias,
-          LocalDate.of(2024, 1, 1),
-          LocalDate.of(2000, 1, 1),
-          2000.0,
-          "123",
-          5,
-          9,
-          "111"
+          "Ana", 2, null, new UsuarioRequestDto("ana", "senha123"),
+          ferias, LocalDate.of(2024, 1, 1), LocalDate.of(2000, 1, 1),
+          2000.0, "123", 5, 9, "111", null, null, null
   );
  }
+
+ private ColaboradorRequestDto dtoAtualizacao(Boolean ferias) {
+  return new ColaboradorRequestDto(
+          "Ana", 2, 3, null, ferias, LocalDate.of(2024, 1, 1),
+          LocalDate.of(2000, 1, 1), 2000.0, "123", 5, 9,
+          "111", null, null, null
+  );
+ }
+
+ private void prepararCriacaoUsuario() {
+  when(usuarioRepository.findByLogin("ana")).thenReturn(Optional.empty());
+  when(passwordEncoder.encode("senha123")).thenReturn("senha-criptografada");
+  when(usuarioRepository.save(any(Usuario.class))).thenAnswer(invocation -> {
+   Usuario novoUsuario = invocation.getArgument(0);
+   novoUsuario.setId(3);
+   return novoUsuario;
+  });
+ }
+ 
 
  // =========================================================
  // LISTAR TODOS
@@ -224,11 +247,10 @@ class ColaboradorServiceTest {
  @Test
  void criar() {
 
-  when(cargoRepository.findById(2))
-          .thenReturn(Optional.of(cargo()));
+  prepararCriacaoUsuario();
 
-  when(usuarioRepository.findById(3))
-          .thenReturn(Optional.of(usuario()));
+  when(cargoRepository.findById(2)).thenReturn(Optional.of(cargo()));
+  when(estabelecimentoRepository.findById(9)).thenReturn(Optional.of(estabelecimento()));
 
   when(colaboradorRepository.save(any()))
           .thenAnswer(invocation -> {
@@ -267,7 +289,7 @@ class ColaboradorServiceTest {
           .findById(2);
 
   verify(usuarioRepository)
-          .findById(3);
+          .findByLogin("ana");
 
   verify(colaboradorRepository)
           .save(any(Colaborador.class));
@@ -280,6 +302,8 @@ class ColaboradorServiceTest {
  @Test
  void criarCargoInexistente() {
 
+  prepararCriacaoUsuario();
+
   when(cargoRepository.findById(2))
           .thenReturn(Optional.empty());
 
@@ -290,10 +314,6 @@ class ColaboradorServiceTest {
 
   verify(cargoRepository)
           .findById(2);
-
-  verifyNoInteractions(
-          usuarioRepository
-  );
 
   verify(
           colaboradorRepository,
@@ -306,30 +326,22 @@ class ColaboradorServiceTest {
  // =========================================================
 
  @Test
- void criarUsuarioInexistente() {
+ void criarLoginExistente() {
 
-  when(cargoRepository.findById(2))
-          .thenReturn(Optional.of(cargo()));
-
-  when(usuarioRepository.findById(3))
-          .thenReturn(Optional.empty());
+  when(usuarioRepository.findByLogin("ana"))
+          .thenReturn(Optional.of(usuario()));
 
   assertThrows(
-          EntityNotFoundException.class,
+          IllegalArgumentException.class,
           () -> service.criar(dto(false))
   );
 
-  verify(cargoRepository)
-          .findById(2);
-
-  verify(usuarioRepository)
-          .findById(3);
-
-  verify(
-          colaboradorRepository,
-          never()
-  ).save(any());
+  verify(usuarioRepository).findByLogin("ana");
+  verify(usuarioRepository, never()).save(any());
+  verify(colaboradorRepository, never()).save(any());
  }
+
+ 
 
  // =========================================================
  // ATUALIZAR
@@ -355,6 +367,8 @@ class ColaboradorServiceTest {
           .thenReturn(
                   Optional.of(usuario())
           );
+  when(estabelecimentoRepository.findById(9))
+          .thenReturn(Optional.of(estabelecimento()));
 
   when(colaboradorRepository.save(colaborador))
           .thenReturn(colaborador);
@@ -362,7 +376,7 @@ class ColaboradorServiceTest {
   ColaboradorResponseDto resultado =
           service.atualizar(
                   1,
-                  dto(true)
+                  dtoAtualizacao(true)
           );
 
   assertNotNull(resultado);
@@ -415,13 +429,15 @@ class ColaboradorServiceTest {
           .thenReturn(
                   Optional.of(usuario())
           );
+  when(estabelecimentoRepository.findById(9))
+          .thenReturn(Optional.of(estabelecimento()));
 
   when(colaboradorRepository.save(colaborador))
           .thenReturn(colaborador);
 
   service.atualizar(
           1,
-          dto(null)
+          dtoAtualizacao(null)
   );
 
   assertFalse(

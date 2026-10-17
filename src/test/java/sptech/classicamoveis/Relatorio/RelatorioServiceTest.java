@@ -1,94 +1,90 @@
 package sptech.classicamoveis.Relatorio;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import sptech.classicamoveis.Colaborador.model.Colaborador;
+import sptech.classicamoveis.Colaborador.repository.ColaboradorRepository;
+import sptech.classicamoveis.Estabelecimento.Estabelecimento;
+import sptech.classicamoveis.Estabelecimento.repository.EstabelecimentoRepository;
+import sptech.classicamoveis.Fornecedor.repository.FornecedorRepository;
 import sptech.classicamoveis.Movimentacao.ItemMovimentacao.ItemMovimentacaoRepository;
-import sptech.classicamoveis.Movimentacao.TipoMovimentacao.TipoMovimentacao;
+import sptech.classicamoveis.Movimentacao.MovimentacaoRepository;
+import sptech.classicamoveis.Movimentacao.Pagamento.repository.PagamentoRepository;
+import sptech.classicamoveis.Movimentacao.service.EstoqueService;
+import sptech.classicamoveis.Produto.repository.ProdutoRepository;
+import sptech.classicamoveis.Relatorio.dto.RelatorioTabelaPrecosDto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RelatorioServiceTest {
+    @Mock MovimentacaoRepository movimentacaoRepository;
+    @Mock ItemMovimentacaoRepository itemRepository;
+    @Mock PagamentoRepository pagamentoRepository;
+    @Mock ColaboradorRepository colaboradorRepository;
+    @Mock ProdutoRepository produtoRepository;
+    @Mock EstoqueService estoqueService;
+    @Mock EstabelecimentoRepository estabelecimentoRepository;
+    @Mock FornecedorRepository fornecedorRepository;
+    @InjectMocks RelatorioService service;
 
- @Mock
- ItemMovimentacaoRepository repository;
+    @Test void vendedorInexistente() {
+        when(colaboradorRepository.findById(99)).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> service.gerarRelatorioVendaPorVendedor(99, null, null));
+    }
 
- @InjectMocks
- RelatorioService service;
+    @Test void rejeitaPeriodoComDataFimAnterior() {
+        Colaborador vendedor = new Colaborador();
+        vendedor.setId(3);
+        when(colaboradorRepository.findById(3)).thenReturn(Optional.of(vendedor));
+        assertThrows(IllegalArgumentException.class, () -> service.gerarRelatorioVendaPorVendedor(
+                3, LocalDate.of(2026, 10, 10), LocalDate.of(2026, 10, 1)));
+        verifyNoInteractions(movimentacaoRepository);
+    }
 
- @Test
- void fornecedor() {
-  List<RelatorioVendaItemDto> x = List.of();
+    @Test void geraRelatorioVendedorSemVendas() {
+        Colaborador vendedor = new Colaborador();
+        vendedor.setId(3); vendedor.setNome("Ana"); vendedor.setSalario(2500.0); vendedor.setComissao(2);
+        when(colaboradorRepository.findById(3)).thenReturn(Optional.of(vendedor));
+        when(movimentacaoRepository.buscarVendasPorVendedor(eq(3), any(), any(), any(), any())).thenReturn(List.of());
 
-  when(repository.relatorioVendasPorFornecedor(1, 2))
-          .thenReturn(x);
+        var resultado = service.gerarRelatorioVendaPorVendedor(3, LocalDate.of(2026, 10, 1), LocalDate.of(2026, 10, 15));
 
-  assertSame(
-          x,
-          service.relatorioVendasPorFornecedor(1, 2)
-  );
- }
+        assertEquals("Ana", resultado.getVendedorNome());
+        assertEquals(0.0, resultado.getTotalVendido());
+        assertEquals(0.0, resultado.getValorComissao());
+        assertTrue(resultado.getVendas().isEmpty());
+    }
 
- @Test
- void produtoSemFiltro() {
-  List<RelatorioVendasPorProdutoDto> x = List.of();
+    @Test void vendaInexistente() {
+        when(movimentacaoRepository.findById(99)).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> service.gerarRelatorioVenda(99));
+    }
 
-  when(repository.relatorioVendasPorProduto(
-          1,
-          2,
-          null,
-          null,
-           TipoMovimentacao.VENDA
-  )).thenReturn(x);
+    @Test void estabelecimentoInexistenteNaTabelaDePrecos() {
+        when(estabelecimentoRepository.findById(7)).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> service.gerarTabelaPrecos(7, null));
+    }
 
-  assertSame(
-          x,
-          service.relatorioVendasPorProduto(
-                  1,
-                  2,
-                  null,
-                  null,
-                  null
+    @Test void geraTabelaDePrecosSemProdutos() {
+        Estabelecimento loja = new Estabelecimento();
+        loja.setNome("Matriz");
+        when(estabelecimentoRepository.findById(1)).thenReturn(Optional.of(loja));
+        when(produtoRepository.findByAtivoTrue()).thenReturn(List.of());
 
-          )
-  );
- }
+        RelatorioTabelaPrecosDto resultado = service.gerarTabelaPrecos(1, null);
 
- @Test
- void produtoComFiltro() {
-  var a = mock(RelatorioVendasPorProdutoDto.class);
-  var b = mock(RelatorioVendasPorProdutoDto.class);
-
-  when(a.produtoId()).thenReturn(1);
-  when(b.produtoId()).thenReturn(2);
-
-  when(repository.relatorioVendasPorProduto(
-          any(),
-          any(),
-          any(),
-          any(),
-          any()
-  )).thenReturn(List.of(a, b));
-
-  LocalDateTime inicio = LocalDateTime.of(2026, 1, 1, 0, 0);
-  LocalDateTime fim = LocalDateTime.of(2026, 1, 31, 23, 59);
-
-  assertEquals(
-          List.of(a),
-          service.relatorioVendasPorProduto(
-                  1,
-                  2,
-                  List.of(1),
-                  inicio,
-                  fim
-          )
-  );
- }
+        assertEquals("Matriz", resultado.getEstabelecimento());
+        assertEquals("Todos os fornecedores", resultado.getFornecedor());
+        assertTrue(resultado.getProdutos().isEmpty());
+    }
 }
