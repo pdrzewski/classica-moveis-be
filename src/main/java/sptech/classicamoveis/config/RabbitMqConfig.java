@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -21,8 +21,8 @@ public class RabbitMqConfig {
     public static final String ROUTING_KEY = "telegram.routing";
 
     @Bean
-    public TopicExchange classicaExchange() {
-        return new TopicExchange(EXCHANGE_NAME, true, false);
+    public DirectExchange classicaExchange() {
+        return new DirectExchange(EXCHANGE_NAME, true, false);
     }
 
     @Bean

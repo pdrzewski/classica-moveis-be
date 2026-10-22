@@ -181,10 +181,8 @@ public class MovimentacaoService {
         List<ItemMovimentacao> itens = itemRepository.findByMovimentacaoId(saved.getId());
         dto.setItens(mapper.toItemResponseDTOList(itens));
 
-        // Disparar alerta de estoque mínimo
-        if (produtoEstoqueAlertaPublisher != null) {
-            produtoEstoqueAlertaPublisher.publishAlertaEstoqueMinimo(saved, itens);
-        }
+        // Disparar alerta de estoque mínimo (publicado após o commit da transação)
+        produtoEstoqueAlertaPublisher.publishAlertaEstoqueMinimo(saved, itens);
 
         return dto;
     }
@@ -530,15 +528,6 @@ public class MovimentacaoService {
                                 + ", solicitado: " + quantidadeSolicitada
                 );
             }
-        }
-    }
-
-    private void dispararAlertaEstoqueMinimo(Movimentacao movimentacao) {
-        try {
-            List<ItemMovimentacao> itens = itemRepository.findByMovimentacaoId(movimentacao.getId());
-            produtoEstoqueAlertaPublisher.publishAlertaEstoqueMinimo(movimentacao, itens);
-        } catch (Exception ignored) {
-            // Não quebra a movimentação se o broker estiver indisponível.
         }
     }
 
