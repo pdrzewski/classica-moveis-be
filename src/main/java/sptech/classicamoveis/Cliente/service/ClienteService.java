@@ -10,6 +10,8 @@ import sptech.classicamoveis.Cliente.dto.ClienteComEnderecoRequestDto;
 import sptech.classicamoveis.Cliente.repository.ClienteRepository;
 import sptech.classicamoveis.Endereco.Endereco;
 import sptech.classicamoveis.Endereco.repository.EnderecoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -26,9 +28,10 @@ public class ClienteService {
         this.enderecoRepository = enderecoRepository;
     }
 
-    public List<ClienteResponseDto> listarClientes() {
-        List<Cliente> clientes = repository.findAll();
-        return new ClienteMapper().toResponseDtoList(clientes);
+    public Page<ClienteResponseDto> listarClientes(Pageable pageable) {
+        Page<Cliente> clientes = repository.findAll(pageable);
+        ClienteMapper mapper = new ClienteMapper();
+        return clientes.map(mapper::toResponseDto);
     }
 
     public ClienteResponseDto criarCliente(ClienteComEnderecoRequestDto requestDto) {
