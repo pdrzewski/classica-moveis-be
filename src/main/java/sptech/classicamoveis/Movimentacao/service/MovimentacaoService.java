@@ -46,6 +46,7 @@ public class MovimentacaoService {
     private final FornecedorRepository fornecedorRepository;
     private final ProdutoRepository produtoRepository;
     private final EstoqueService estoqueService;
+    private final ProdutoEstoqueAlertaPublisher produtoEstoqueAlertaPublisher;
 
     @Transactional(readOnly = true)
     public MovimentacaoResponseDto buscarPorId(Integer id) {
@@ -180,6 +181,11 @@ public class MovimentacaoService {
         List<ItemMovimentacao> itens = itemRepository.findByMovimentacaoId(saved.getId());
         dto.setItens(mapper.toItemResponseDTOList(itens));
 
+        // Disparar alerta de estoque mínimo
+        if (produtoEstoqueAlertaPublisher != null) {
+            produtoEstoqueAlertaPublisher.publishAlertaEstoqueMinimo(saved, itens);
+        }
+
         return dto;
     }
 
@@ -305,7 +311,7 @@ public class MovimentacaoService {
             case VENDA -> validarVenda(dto);
             case COMPRA -> validarCompra(dto);
             case TRANSFERENCIA -> validarTransferencia(dto);
-            case AJUSTE_ENTRADA, AJUSTE_SAIDA -> validarAjuste(dto);
+            case AJUSTE_ENTRADA, AJUSTE_SAIDA, DEVOLUÇÃO -> validarAjuste(dto);
         }
     }
 
@@ -438,6 +444,10 @@ public class MovimentacaoService {
         if (dto.getEstabelecimentoOrigemId() != null || dto.getClienteId() != null) {
             throw new IllegalArgumentException("Compra não pode ter estabelecimento origem ou cliente");
         }
+
+        if (dto.getPagamentos() != null && !dto.getPagamentos().isEmpty()) {
+            throw new IllegalArgumentException("Compra não pode ter forma de pagamento");
+        }
     }
 
     private void validarTransferencia(MovimentacaoRequestDto dto) {
@@ -460,7 +470,8 @@ public class MovimentacaoService {
         }
 
         if (dto.getClienteId() != null ||
-                dto.getFornecedorId() != null ) {
+                dto.getFornecedorId() != null ||
+                (dto.getPagamentos() != null && !dto.getPagamentos().isEmpty())) {
 
             throw new IllegalArgumentException(
                     "Transferência não pode ter cliente, fornecedor ou forma de pagamento"
@@ -477,7 +488,8 @@ public class MovimentacaoService {
         }
 
         if (dto.getEstabelecimentoDestinoId() != null || dto.getClienteId() != null ||
-                dto.getFornecedorId() != null ) {
+                dto.getFornecedorId() != null ||
+                (dto.getPagamentos() != null && !dto.getPagamentos().isEmpty())) {
             throw new IllegalArgumentException("Ajuste não pode ter estabelecimento destino, cliente, fornecedor ou forma de pagamento");
         }
 
@@ -518,6 +530,15 @@ public class MovimentacaoService {
                                 + ", solicitado: " + quantidadeSolicitada
                 );
             }
+        }
+    }
+
+    private void dispararAlertaEstoqueMinimo(Movimentacao movimentacao) {
+        try {
+            List<ItemMovimentacao> itens = itemRepository.findByMovimentacaoId(movimentacao.getId());
+            produtoEstoqueAlertaPublisher.publishAlertaEstoqueMinimo(movimentacao, itens);
+        } catch (Exception ignored) {
+            // Não quebra a movimentação se o broker estiver indisponível.
         }
     }
 
