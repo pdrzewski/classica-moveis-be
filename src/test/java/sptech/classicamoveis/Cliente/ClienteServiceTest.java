@@ -6,7 +6,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import sptech.classicamoveis.Cliente.dto.ClienteComEnderecoRequestDto;
+import sptech.classicamoveis.Cliente.dto.ClienteResponseDto;
 import sptech.classicamoveis.Cliente.repository.ClienteRepository;
 import sptech.classicamoveis.Cliente.service.ClienteService;
 import sptech.classicamoveis.Endereco.Endereco;
@@ -27,7 +32,7 @@ class ClienteServiceTest {
         Cliente c=new Cliente(); c.setId(id); c.setNome(nome); c.setDocumento(doc); c.setTelefone1("11999999999"); c.setTelefone2("11888888888"); c.setEmail("a@a.com"); c.setObservacao("obs"); c.setIe("IE");
         Endereco e=new Endereco(); e.setId(id); e.setCep("01000-000"); e.setLogradouro("Rua A"); e.setBairro("Centro"); e.setCidade("SP"); e.setNumero("10"); e.setEstado("SP"); c.setEndereco(e); return c;
     }
-    @Test void listar(){when(repository.findAll()).thenReturn(List.of(cliente(1,"Ana","111")));assertEquals("Ana",service.listarClientes().get(0).getNome());}
+    @Test void listar() {when(repository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(cliente(1, "Ana", "111"))));Page<ClienteResponseDto> resultado = service.listarClientes(PageRequest.of(0, 10));assertEquals(1, resultado.getTotalElements());assertEquals("Ana", resultado.getContent().get(0).getNome());}
     @Test void buscarExistente(){when(repository.findById(1)).thenReturn(Optional.of(cliente(1,"Ana","111")));assertEquals("Ana",service.buscarClientePorId(1).getNome());}
     @Test void buscarInexistenteLancaExcecao(){when(repository.findById(9)).thenReturn(Optional.empty());assertThrows(EntityNotFoundException.class, () -> service.buscarClientePorId(9));}
     @Test void criar(){
