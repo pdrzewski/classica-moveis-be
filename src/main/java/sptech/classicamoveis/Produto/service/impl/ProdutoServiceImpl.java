@@ -1,6 +1,8 @@
 package sptech.classicamoveis.Produto.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sptech.classicamoveis.Categoria.Categoria;
@@ -38,6 +40,8 @@ public class ProdutoServiceImpl implements ProdutoService {
     private final ProdutoMapper produtoMapper;
     private final EstoqueService estoqueService;
     private final EstabelecimentoRepository estabelecimentoRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(ProdutoServiceImpl.class);
 
     @Override
     @Transactional(readOnly = true)
@@ -98,7 +102,9 @@ public class ProdutoServiceImpl implements ProdutoService {
         Fornecedor fornecedor = buscarFornecedorPorId(dto.fornecedorId());
         Categoria categoria = buscarCategoriaPorId(dto.categoriaId());
         Produto produto = produtoMapper.toEntity(dto, fornecedor, categoria);
-        return produtoMapper.toResponseDTO(produtoRepository.save(produto));
+        Produto salvo = produtoRepository.save(produto);
+
+        return produtoMapper.toResponseDTO(salvo);
     }
 
     @Override
