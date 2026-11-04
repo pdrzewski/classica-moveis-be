@@ -47,6 +47,7 @@ public class MovimentacaoService {
     private final ProdutoRepository produtoRepository;
     private final EstoqueService estoqueService;
     private final ProdutoEstoqueAlertaPublisher produtoEstoqueAlertaPublisher;
+    private final MovimentacaoS3Service movimentacaoS3Service;
 
     @Transactional(readOnly = true)
     public MovimentacaoResponseDto buscarPorId(Integer id) {
@@ -181,8 +182,14 @@ public class MovimentacaoService {
         List<ItemMovimentacao> itens = itemRepository.findByMovimentacaoId(saved.getId());
         dto.setItens(mapper.toItemResponseDTOList(itens));
 
+        if (movimentacaoS3Service != null) {
+            movimentacaoS3Service.enviarMovimentacaoJson(saved.getId(), requestDto);
+        }
+
         // Disparar alerta de estoque mínimo (publicado após o commit da transação)
-        produtoEstoqueAlertaPublisher.publishAlertaEstoqueMinimo(saved, itens);
+        if (produtoEstoqueAlertaPublisher != null) {
+            produtoEstoqueAlertaPublisher.publishAlertaEstoqueMinimo(saved, itens);
+        }
 
         return dto;
     }
